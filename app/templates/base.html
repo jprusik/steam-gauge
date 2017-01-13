@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html prefix="og: http://ogp.me/ns#">
+    <head>
+        <title>{{ config.APP_NAME }} | {% block title %}{% endblock %}</title>
+        <meta charset="utf-8">
+
+        {# these lines prevent the site from being indexed #}
+        {% if config.DISABLE_INDEXING_P %}
+            <meta name="robots" content="noindex, nofollow">
+            <meta name="googlebot" content="noindex">
+        {% endif %}
+
+        <meta http-equiv="X-UA-Compatible" content="IE=9,chrome=1">
+        <meta name="viewport" content="initial-scale = 1.0,maximum-scale = 1.0">
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="description" content="{{ config.APP_NAME }} allows you to get a customizable summary of your Steam account, including game values, install sizes, and play time.">
+        <meta name="keywords" content="Steam, Steam profile, Steam calculator, steam stats, Steam games, steam account, steam tables, steam profile size, steam account value, steam play time, steam friends, steam friends games in common">
+        <meta name="author" content="{{ config.AUTHOR.NAME }}">
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:site" content="{{ config.AUTHOR.HANDLE }}">
+        <meta name="twitter:creator" content="{{ config.AUTHOR.HANDLE }}">
+        <meta name="twitter:title" content="{{ config.APP_NAME }} | Get the value and size of your Steam account">
+        <meta name="twitter:description" content="{{ config.APP_NAME }} allows you to get a customizable summary of your Steam account, including game values, install sizes, and play time.">
+        <meta name="twitter:image:src" content="{{ config.DOMAIN_URL }}{{ url_for('static', filename='favicon-large.png') }}">
+        <meta name="twitter:domain" content="{{ config.PRETTY_DOMAIN_URL }}">
+        <meta property="og:site_name" content="{{ config.APP_NAME }}"/>
+        <meta property="og:title" content="{{ config.APP_NAME }} | Get the value and size of your Steam account" />
+        <meta property="og:url" content="{{ config.DOMAIN_URL }}" />
+        <meta property="og:description" content="{{ config.APP_NAME }} allows you to get a customizable summary of your Steam account, including game values, install sizes, and play time." />
+        <meta property="og:image" content="{{ config.DOMAIN_URL }}{{ url_for('static', filename='favicon-large.png') }}" />
+        <meta property="fb:admins" content="{{ config.FB_ADMIN_USERS }}" />
+        <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+
+        <!-- Bootstrap -->
+        <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+        <link href="{{ url_for('static', filename='css/bootstrap-theme.min.css') }}" rel="stylesheet">
+
+        <!-- Font Awesome by Dave Gandy - http://fortawesome.github.com/Font-Awesome -->
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/font-awesome.min.css') }}">
+
+        {# Sitewide stylesheet #}
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/global.css') }}">
+
+        {% block custom_header %}{% endblock %}
+    </head>
+    <body role="document">
+        <nav class="navbar navbar-inverse navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="{{ url_for('index') }}"><i style="margin-right:0.5em;" class="icon-dashboard"></i>{{ config.APP_NAME }}</a>
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                </div>
+                <div id="navbar" class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="{{ url_for('index') }}"><i style="margin-right:0.5em;" class="fa fa-dashboard"></i>Gauge</a></li>
+                        <li><a href="{{ url_for('friends') }}"><i style="margin-right:0.5em;" class="fa fa-users"></i>Friends</a></li>
+                        <li><a href="{{ url_for('receipt') }}"><i style="margin-right:0.5em;" class="fa fa-file-o"></i>Receipt</a></li>
+                        {% if session.account_id %}
+                            <li class="steam-account">
+                                <a style="color:#8bb9e0;" href="{{ url_for('account', username=session.account_id) }}"><i class="fa fa-user fa-fw"></i> Your account</a>
+                            </li>
+                            {# {% if session['admin_p'] == True %}
+                                <li class="admin-menu">
+                                    <a href="#">Admin</a>
+                                </li>
+                            {% endif %} #}
+                            <li class="steam-logout">
+                                <div class="btn-group">
+                                    <a href="{{ url_for('logout') }}" class="btn btn-primary btn-sm navbar-btn">Log out</a>
+                                </div>
+                            </li>
+                        {% else %}
+                            <li class="steam-login">
+                                <div class="btn-group">
+                                    <a href="{{ url_for('login') }}" class="btn btn-primary btn-sm navbar-btn">Log in</a>
+                                </div>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div><!--/.nav-collapse -->
+
+            </div>
+        </nav>
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="container">
+                {% for message in messages %}
+                    <div class="alert alert-info alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>{{ message }}</div>
+                {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <div id="lightscreen">
+            <div id="lightscreenform">
+                <table>
+                    <tr>
+                        <td style="vertical-align:middle;font-size:3em;padding-right:15px;"><i class="fa fa-cog fa-spin"></i></td>
+                        <td style="padding-left:5px;">{{ config.APP_NAME }} is working, please be patient...</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        {% block before_body_content %}{% endblock %}
+
+        <div class="container" role="main">
+            {% block content %}{% endblock %}
+        </div>
+
+        {% block after_body_content %}{% endblock %}
+
+        <footer class="footer footer-inverse">
+            <div class="container">
+                <p class="text-muted">
+                    <div style="text-align:center;width:100%;">
+                        <a href="{{ url_for('index') }}">Home</a> | <a href="{{ url_for('about') }}">About</a> {#| <a href="#">Support {{ config.APP_NAME }} Development</a> #}| <a href="{{ url_for('privacy') }}">Privacy Policy</a>
+                    </div>
+                    <div class="site-info">
+                        <a href="http://steampowered.com">Powered by Steam.</a> Valve and Steam are trademarks of Valve Corporation. {{ config.PRETTY_DOMAIN_URL }} is not affiliated with Valve in any way.<br/>2013-2017, {{ config.APP_NAME }} | Developed by <a href="{{ config.AUTHOR.WEBSITE }}" target="_blank">{{ config.AUTHOR.NAME }}</a>. Questions? Notice an issue? Let me know at <a href="mailto:{{ config.SUPPORT_EMAIL }}">{{ config.SUPPORT_EMAIL }}</a>
+                    </div>
+                </p>
+                {% block custom_footer %}{% endblock %}
+            </div>
+        </footer>
+
+        <script src="{{ url_for('static', filename='js/jquery-3.1.1.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+        {% block page_js %}{% endblock %}
+        {# Google Analytics #}
+        {% if config.GOOGLE_ANALYTICS %}
+        <script>
+            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+            })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+            ga('create', '{{ config.GOOGLE_ANALYTICS }}', 'auto');
+            ga('send', 'pageview');
+        </script>
+        {% endif %}
+
+        {% if session['admin_p'] == True %}
+        <div class="container">
+            <pre style="max-width:640px;margin:10px auto;color:white;background:none;line-height:1em;font-size:0.7em;">
+                You were last at {{ request.referrer }}<br>
+                Your session started at {{ session.session_start }}<br>
+                Your last request was at {{ session.last_action }}
+            </pre>
+        </div>
+        {% endif %}
+        {% block debug %}{% endblock %}
+    </body>
+</html>

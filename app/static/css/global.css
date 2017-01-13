@@ -1,0 +1,232 @@
+/* Boilerplate Additions
+-------------------------------------------------- */
+.bold{
+    font-weight:bold;
+}
+.italic{
+    font-style:italic;
+}
+.underline{
+    text-decoration:underline;
+}
+.clear{
+    height:1em;
+    width:100%;
+    clear:both;
+}
+.hidden{
+    display:none;
+}
+.text-centered{
+    text-align:center;
+}
+
+#lightscreen{
+    clear:both;
+    color:#3d3d3d;
+    display:none;
+    width:100%;
+    height:100%;
+    position:fixed;
+    top:0;
+    left:0;
+    background-color:rgba(0,0,0,0.3);
+    z-index:50;
+}
+#lightscreenform{
+    color:#3d3d3d;
+    max-width:220px;
+    padding:15px;
+    -webkit-border-radius:10px;
+    border-radius:10px;
+    border:5px solid #3d3d3d;
+    background:white;
+    position:relative;
+    top:40%;
+    margin:auto;
+    z-index:51;
+    -webkit-box-shadow:0 0 5px black;
+    box-shadow:0 0 5px black;
+}
+#lightscreenform table{
+    color:#3d3d3d;
+    border-collapse:collapse;
+    border-spacing:0;
+    border:0 solid gray;
+}
+.site-info{
+    max-width:640px;
+    padding:5px 0;
+    margin:0 auto;
+    color:#B0AEAC;
+    font-size:0.7em;
+    text-align:center;
+    clear:both;
+}
+
+/* Sticky footer styles
+-------------------------------------------------- */
+html {
+    position: relative;
+    min-height: 100%;
+}
+body {
+    /* Margin bottom by footer height */
+    margin-bottom: 93px;
+    color: #9d9d9d;
+}
+.footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    /* Set the fixed height of the footer here */
+    /*height: 60px;*/
+    /*background-color: #f5f5f5;*/
+}
+.container .text-muted {
+    margin: 20px 0;
+}
+
+
+/* Bootstrap overrides
+-------------------------------------------------- */
+body {
+    padding-top:70px;
+    padding-bottom:30px;
+    background-color:#1b2838;
+    font-size:16px;
+}
+.navbar-inverse,
+.footer-inverse{
+    font-size:14px;
+    background-color:#171a21;
+    border-color:#080808;
+    background-image:none;
+}
+.navbar-inverse{
+    color:#b8b6b4;
+    text-transform:uppercase;
+}
+.navbar-inverse .navbar-brand{
+    color:#eee;
+    text-shadow:#2a2a2a 1px 1px 0px !important;
+    font-family:Impact,Arial,sans-serif;
+    letter-spacing:1px;
+    font-size:28px;
+}
+.steam-logout .btn-primary,
+.steam-login .btn-primary{
+    text-transform:capitalize;
+    background-color:transparent;
+    background-image:none;
+    border-color:#9d9d9d;
+    color:#9d9d9d;
+}
+.steam-logout .btn-primary:hover,
+.steam-login .btn-primary:hover{
+    border-color:#FFFFFF;
+    color:#FFFFFF;
+}
+.steam-logout .btn-primary:active,
+.steam-login .btn-primary:active{
+    background-color:transparent;
+}
+.navbar-inverse .navbar-collapse>ul.navbar-nav>li.dropdown{
+    display:none;
+}
+
+.jumbotron{
+    background:rgba( 0, 0, 0, 0.2 );
+    color:#8f98a0;
+}
+.jumbotron a{
+    color:#8bb9e0;
+}
+.theme-dropdown .dropdown-menu {
+    position: static;
+    display: block;
+    margin-bottom: 20px;
+}
+.table{
+    padding:1em 0.5em;
+    -moz-box-shadow:0px 0px 1px black;
+    -webkit-box-shadow:0px 0px 1px black;
+    box-shadow:0px 0px 1px black;
+    text-shadow:#3d3d3d 1px 1px 1px;
+    font-size:0.8em;
+    border-spacing:0;
+    width:100%;
+    margin:auto;
+    -webkit-touch-callout:none;
+    -webkit-user-select:none;
+    -khtml-user-select:none;
+    -moz-user-select:none;
+    -ms-user-select:none;
+    user-select:none;
+}
+.table>thead>tr{
+    font-weight:bold;
+    color:#FFFFFF;
+    text-align:left;
+    border-bottom:1px solid #2f2f2f;
+}
+.table>thead>tr:hover{
+    cursor:pointer;
+}
+.table>thead>tr th{
+    background-color:#74706f;
+    font-size:1em;
+    padding:1em 20px 1em 5px;
+    border-bottom:1px solid #555555;
+    text-shadow:0 -1px 0 rgba(0, 0, 0, 0.4);
+    -webkit-box-shadow:inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 1px 1px rgba(0, 0, 0, 0.2);
+    text-align:left;
+    vertical-align:middle;
+}
+.table>thead>tr th i{
+    display:none;
+    font-size:16px;
+}
+.table>thead>tr th sup{
+    display:none;
+}
+.table>tbody>tr{
+    background-color:grey;
+    color:#EEEEEE;
+}
+.table>tbody>tr.row-selected{
+    background-color:#3d3d3d;
+}
+.table>tbody>tr.row-selected:hover{
+    background-color:#333333;
+}
+.table>tbody>tr>td{
+    padding:1em 0.5em;
+}
+.table>tbody>tr>td.sorting_1{
+    background-color:#2f2f2f;
+}
+.table>tbody>tr:hover>td.sorting_1 {
+    background-color:#2a2a2a;
+}
+.table>tbody>tr.row-selected>td.sorting_1 {
+    background-color:#222222;
+}
+.table>tbody>tr.row-selected:hover>td.sorting_1 {
+    background-color:#111111;
+}
+.table-hover>tbody>tr:hover{
+    background-color:#444444;
+}
+
+@media (min-width:1230px){
+    .container{
+        width:1230px;
+    }
+}
+@media (max-width:767px){
+    .steam-logout .btn-group,
+    .steam-login .btn-group{
+        padding-left:15px;
+    }
+}

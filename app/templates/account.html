@@ -1,0 +1,1161 @@
+{% extends "base.html" %}
+{% block title %}Get the value and size of your Steam account{% endblock %}
+{% block custom_header %}
+        {% if api_return.Account.personaname %}
+            <meta property="og:title" content="{{ config.APP_NAME }} Account Summary for {{ api_return.Account.personaname }}" />
+        {% else %}
+            <meta property="og:title" content="{{ config.APP_NAME }} Account Summary for {{ api_return.Account.steamid }}" />
+        {% endif %}
+        <meta property="og:url" content="{{ config.DOMAIN_URL }}/account?username={{ api_return.Account.steamid }}" />
+        <meta property="og:image" content="{{ api_return.Account.avatarfull }}" />
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/ColVis.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/ColReorder.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/TableTools.css') }}">
+        <style type="text/css">
+            @media only screen and (max-width:640px){
+                #app-list{
+                    width:100% !important;
+                }
+                .app-head-row th i{
+                    display:block !important;
+                }
+                .app-head-row th sup{
+                    display:block !important;
+                }
+                .header_text{
+                    display:none;
+                }
+                .user-avatar{
+                    width:100%;
+                    max-width:184px;
+                    min-width:80px;
+                }
+                .top-summary{
+                    width:100% !important;
+                }
+                .lightscreen-bug-form{
+                    left:0px !important;
+                }
+
+                /* Adjust Table for mobile */
+                #app-list_wrapper{
+                    width:100% !important;
+                    overflow-x:scroll !important;
+                    padding:0px !important;
+                }
+                .FixedHeader_Cloned{
+                    display:none !important;
+                }
+            }
+
+            /* Display the lightscreen by default - turn it off when the page js is done loading */
+            #lightscreen{
+                display:block;
+                z-index:998;
+            }
+            #lightscreenform{
+                display:block;
+                z-index:999;
+            }
+            .profile-name{
+                margin:0px;
+                font-size:2em;
+                line-height:1em;
+                text-shadow:#3d3d3d 2px 2px 1px;
+                font-weight:normal;
+                letter-spacing:1px;
+                font-family:ImpactEmb,Impact,Helvetica,Arial,sans-serif;
+            }
+            .profile-name a{
+                color:#eee;
+                text-shadow:#2a2a2a 1px 1px 0px;
+            }
+            .account-status{
+                font-size:0.7em;
+            }
+            .account-status:before{
+                min-width:1em;
+                margin:0px 0.25em 0px 0.75em;
+                font-family:FontAwesome;
+                -webkit-font-smoothing:antialiased;
+                text-decoration:inherit;
+                display:inline-block;
+                speak:none;
+            }
+            .account-status.offline:before{
+                color:#FF6C00;
+                content:"\f05e";
+            }
+            .account-status.online:before{
+                color:green;
+                content:"\f111";
+            }
+            .account-status.busy:before,
+            .account-status.away:before,
+            .account-status.snooze:before,
+            .account-status.seeking_trade:before,
+            .account-status.seeking_play:before{
+                color:#FFD100;
+                content:"\f042";
+            }
+            .bookmarklet-link:before{
+                font-family:FontAwesome;
+                content:"\f05a";
+                margin-right:0.5em;
+            }
+            .social-div{
+                display:inline-block;
+                font-size:12px;
+                background-color:#eee;
+                color:#2a2a2a;
+                padding:3px;
+                margin:12px auto;
+                max-width:184px;
+                line-height:24px;
+                -webkit-border-radius:3px;
+                border-radius:3px;
+                font-weight:bold;
+                width:100%;
+            }
+            .custom-share{
+                display:inline-block;
+                font-size:2em;
+                margin:0px 0.25em;
+                border:0px solid #ccc;
+                width:1em;
+                height:1em;
+                text-decoration:none !important;
+            }
+            .bug-report{
+                line-height:1em;
+            }
+            .bug-report *{
+                color:#8bb9e0;
+                font-size:0.75em;
+                cursor:pointer;
+            }
+            .lightscreen-bug-form{
+                color:#3d3d3d;
+                display:none;
+                max-width:280px;
+                padding:15px;
+                -webkit-border-radius:10px;
+                border-radius:10px;
+                border:5px solid #3d3d3d;
+                background:white;
+                position:fixed;
+                left:40%;
+                top:50px;
+                -webkit-box-shadow:0px 0px 5px black;
+                box-shadow:0px 0px 5px black;
+                z-index:999;
+            }
+            .lightscreen-bug-form label{
+                display:block;
+                font-size:0.75em;
+                font-weight:bold;
+                margin-top:0.25em;
+            }
+            .lightscreen-bug-form input,
+            .lightscreen-bug-form textarea{
+                width:100%;
+            }
+            .submit-button{
+                font-size:0.75em;
+                font-weight:bold;
+                display:inline;
+                padding:0.5em;
+                -webkit-border-radius:3px;
+                border-radius:3px;
+                color:#e5e4dc;
+                background:#61892b;
+                cursor:pointer;
+            }
+            .submit-button:hover{
+                background-color:#84BC3C;
+            }
+            #selection_stats{
+                width:100%;
+            }
+            .top-summary{
+                color:#eeeeee;
+                padding:0px !important; /*important because it conflicts with style.css*/
+                margin:10px 0px;
+                font-size:1em;
+                font-style:italic;
+                width:50%;
+            }
+
+            /*Table Toolbar*/
+            #app-list_filter{
+                color:#eeeeee;
+            }
+            #app-list_filter input{
+                color:#000000;
+                height:inherit;
+                padding:3px;
+                margin:0px 5px;
+            }
+            div.DTTT_container,
+            .ColVis{
+                margin-bottom:5px;
+            }
+            a.DTTT_button span{
+                -webkit-border-radius:0px !important;
+                -moz-border-radius:0px !important;
+                -ms-border-radius:0px !important;
+                -o-border-radius:0px !important;
+                border-radius:0px !important;
+                -webkit-box-shadow:0px 0px 0px #ccc !important;
+                -moz-box-shadow:0px 0px 0px #ccc !important;
+                -ms-box-shadow:0px 0px 0px #ccc !important;
+                -o-box-shadow:0px 0px 0px #ccc !important;
+                box-shadow:0px 0px 0px #ccc !important;
+                font-size:11px;
+                line-height:22px;
+            }
+            .ColVis_Button,
+            a.DTTT_button{
+                height:32px;
+                font-size:14px;
+                color:black;
+                background-color:#f3f3f3;
+                border:1px solid #999;
+            }
+            .ColVis_Button:hover,
+            .DTTT_button:hover{
+                background-color:#e2e2e2;
+            }
+            #app-list_processing{
+                font-weight:bold;
+                color:#eee;
+                width:100%;
+                text-align:center;
+                position:absolute;
+                top:10px;
+                left:0;
+            }
+
+            /*select*/
+            #ToolTables_app-list_0:before{
+                font-family:FontAwesome;
+                content:"\f046\00a0";
+            }
+            /*save*/
+            #ToolTables_app-list_14:before{
+                font-family:FontAwesome;
+                content:"\f019\00a0";
+            }
+            /*print*/
+            #ToolTables_app-list_21:before{
+                font-family:FontAwesome;
+                content:"\f02f\00a0";
+            }
+            /*show/hide columns*/
+            button.ColVis_MasterButton span:before{
+                font-family:FontAwesome;
+                content:"\f0db\00a0";
+            }
+            #account_app_foot_row,
+            #selection_stats,
+            #app-list_wrapper{
+                padding:5px;
+                background-color:#555555;
+            }
+            #app-list_length{
+                float:left;
+            }
+            .ColVis_title span{
+                margin-left:0.5em;
+            }
+            .ColVis_title sup{
+                font-size:8px;
+            }
+            .ColVis_title .header_text{
+                font-size:12px;
+            }
+            .ColVis_collection{
+                box-sizing:content-box;
+            }
+
+            /*Add sort icons*/
+            .sorting_asc{
+                background:#3f3f3f url('{{ url_for('static', filename='images/sort_asc.png') }}') no-repeat center right !important;
+                border-bottom:1px solid #3f3f3f !important;
+                border-right:1px solid #3f3f3f !important;
+                padding-right:20px;
+            }
+            .sorting_desc{
+                background:#3f3f3f url('{{ url_for('static', filename='images/sort_desc.png') }}') no-repeat center right !important;
+                border-bottom:1px solid #3f3f3f !important;
+                border-right:1px solid #3f3f3f !important;
+                padding-right:20px;
+            }
+            .sorting{
+                background:#74706f url('{{ url_for('static', filename='images/sort_both.png') }}') no-repeat center right !important;
+                padding-right:20px;
+            }
+
+            .title_col a, .metascore_col a, .genres_col a, .developer_col a, .publisher_col a{
+                color:#8bb9e0;
+            }
+            .app-row{
+                cursor:pointer;
+            }
+            .table>tbody>tr>td,
+            .table>tbody>tr>th{
+                border-width:0;
+            }
+            .app-foot-row{
+                cursor:default;
+                font-weight:bold;
+                color:#FFFFFF;
+                text-align:left;
+                border-top:1px solid #a0a0a0;
+            }
+            .app-foot-row td{
+                background-color:#74706f;
+                border-right:1px solid #666666;
+                border-top:1px solid #555555;
+            }
+            .dataTables_paginate a{
+                font-size:14px;
+                padding:2px 6px;
+                margin-right:10px;
+                background-color:#fff;
+                border:1px solid #d0d0d0;
+                color:#333;
+                font-weight:bold;
+                cursor:pointer;
+            }
+            .dataTables_paginate a:hover{
+                background-color:#8bb9e0;
+            }
+            .paginate_disabled_previous, .paginate_disabled_next{
+                display:none;
+            }
+            #app-list_info{
+                font-size:12px;
+                line-height:1.5em;
+                margin-top:0.5em;
+                font-weight:bold;
+            }
+
+            /* Page Bootstrap Overrides */
+            .jumbotron{
+                margin-bottom:15px;
+            }
+        </style>
+{% endblock %}
+{% block before_body_content %}
+{% endblock %}
+{% block content %}
+    <div class="container">
+        {% if api_return.QueryStatus.error == True %}
+            <div style="margin:10% auto;width:100%;max-width:640px;">
+                <div style="margin:30px auto;text-align:center;">
+                    <h1><a style="color:#EEEEEE;text-decoration:none;line-height:1.1em;vertical-align:bottom;" href="{{ url_for('index') }}"><i class="fa fa-exclamation-sign"></i>&nbsp;Error</a></h1>
+                    <p style="font-style:italic;color:#B0AEAC;">{{ api_return.QueryStatus.error_message }}</p>
+                    <p style="font-style:italic;color:#B0AEAC;">Want to try a different search?</p>
+                    <div class="account_search" style="width:100%;"></div>
+                    <br>
+                    <div style="margin:auto;width:230px;font-size:1.5em;font-weight:normal;letter-spacing:3px;font-family:ImpactEmb,Impact,Helvetica,Arial,sans-serif;text-transform:uppercase;text-shadow:-1px -1px 0px rgba(0, 0, 0, 0.7);-webkit-user-select:none;-khtml-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;">
+                        <p style="text-align:left;"><a style="text-decoration:none;color:#EEEEEE;vertical-align:bottom;" href="{{ url_for('index') }}"><i style="margin-right:0.5em;" class="fa fa-dashboard"></i>{{ config.APP_NAME }}</a></p>
+                        <p style="text-align:left;"><a style="text-decoration:none;color:#EEEEEE;vertical-align:bottom;" href="{{ url_for('friends') }}"><i style="margin-right:0.5em;" class="fa fa-group"></i>Steam Friends</a></p>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="jumbotron">
+                <table class="account-summary">
+                    <tbody>
+                        <tr>
+                            <td style="vertical-align:top;padding:10px 0px;max-width:184px;">
+                            {% if api_return.Account.avatarfull %}
+                                <img class="user-avatar" src="{{ api_return.Account.avatarfull }}" alt="user avatar" />
+                            {% else %}
+                                <img class="user-avatar" src="{{ url_for('static', filename='images/default_avatar.jpg') }}" alt="unknown user avatar" />
+                            {% endif %}
+                                <div class="social-div">Share:<a id="twitter_share" style="color:#0094C2;" class="custom-share" href="" onclick="javascript:window.open(this.href,'', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=275,width=500');return false;"><i class="fa fa-twitter-square"></i></a> <a style="color:#d94f30;" class="custom-share" href="https://plus.google.com/share?url={{ config.DOMAIN_URL }}/account?username={{ api_return.Account.steamid }}" onclick="javascript:window.open(this.href,'', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=275,width=500');return false;"><i class="fa fa-google-plus-square"></i></a> <a style="color:#3b5998;" class="custom-share" href="https://www.facebook.com/sharer/sharer.php?u={{ config.DOMAIN_URL }}/account?username={{ api_return.Account.steamid }}" onclick="javascript:window.open(this.href,'', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=275,width=500');return false;"><i class="fa fa-facebook-square"></i></a></div>
+                                <div class="bug-report">
+                                    <i class="fa fa-bug"></i>&nbsp;<a href="#">Something off? Report bugs here.</a>
+                                </div>
+                            </td>
+                            <td style="vertical-align:top;padding:10px;">
+                            {% if api_return.Account.personaname %}
+                                <h2 class="profile-name"><a href="http://steamcommunity.com/profiles/{{ api_return.Account.steamid }}" target="_blank">{{ api_return.Account.personaname }}</a></h2>
+                                <h4>Steam ID: <a style="color:#8bb9e0;" href="http://steamcommunity.com/profiles/{{ api_return.Account.steamid }}" target="_blank">{{ api_return.Account.steamid }}</a></h4>
+                            {% else %}
+                                <h2 class="profile-name"><a href="http://steamcommunity.com/profiles/{{ api_return.Account.steamid }}" target="blank">{{ api_return.Account.steamid }}</a></h2>
+                            {% endif %}
+                                <div>
+                                    <span style="font-weight:bold;font-size:0.75em;">This user's status is: </span><span class="account-status {{ api_return.Account.personastate|replace('0', 'offline')|replace('1', 'online')|replace('2', 'busy')|replace('3', 'away')|replace('4', 'snooze')|replace('5', 'seeking_trade')|replace('6', 'seeking_play') }}">{{ api_return.Account.personastate|replace('0', 'Offline')|replace('1', 'Online')|replace('2', 'Busy')|replace('3', 'Away')|replace('4', 'Snooze')|replace('5', 'Seeking trade')|replace('6', 'Seeking play') }}</span>
+                                    <p style="color:#eeeeee;font-weight:bold;padding:0px;font-size:0.75em;">
+                                    Steam user since {{ api_return.Account.timecreated.strftime('%B %d, %Y') }}
+                                    <br/>
+                                    {% if api_return.Account.realname %}<span id="user_realname">{{ api_return.Account.realname }} | </span>{% endif %}
+                                    {% if api_return.Account.cityid %}<span id="user_cityid">{{ api_return.Account.cityid }}, </span>{% endif %}
+                                    {% if api_return.Account.locstatecode %}<span id="user_state">{{ api_return.Account.locstatecode }}, </span>{% endif %}
+                                    {% if api_return.Account.loccountrycode %}<span id="user_country">{{ api_return.Account.loccountrycode }}</span>{% endif %}
+                                    <br/>
+                                    <br/>
+                                    Last logoff: <span id="last_logoff_datetime">{{ api_return.Account.lastlogoff }}</span>
+                                    {% if api_return.Account.gameextrainfo %}<br/>Currently Playing: <span id="current_app">{{ api_return.Account.gameextrainfo }}</span>{% endif %}
+                                    </p>
+                                </div>
+                                <div class="top-summary">
+                                    Over the last <span class="account_age_container"></span>, you've spent <span class="hours_played_container"></span> hours playing this selection, which includes <span class="selection_count_container"></span> items, is valued at $<span class="usd_sum_container"></span>, and requires <span class="gb_sum_container"></span> GB
+                                </div>
+                                <a class="bookmarklet-link" style="font-size:0.75em;" href="{{ url_for('receipt') }}" target="_blank">Want to know how much you've <span class="italic">spent</span> on Steam?</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <table id="app-list" class="table table-hover" cellspacing="0" style="font-size:0.6em;">
+                <!-- Apps Header Start -->
+                <thead>
+                    <tr class="app-head-row">
+                        <th title="App Type" id="type_header" class="type_col"><i class="fa fa-tag"></i><span class="header_text">Type</span></th>
+                        <th title="App Id" id="id_header" class="id_col"><i class="fa fa-list-ol"></i><span class="header_text">ID</span></th>
+                        <th title="App Icon" id="icon_header" class="icon_col"><i class="fa fa-photo"></i><span class="header_text">Icon</span></th>
+                        <th title="App Title" id="title_header" class="title_col"><i class="fa fa-list"></i><span class="header_text">Title</span></th>
+                        <th title="Minutes Running App on Steam" id="minutes_played_header" class="minutes_played_col"><i class="fa fa-time"></i><sup>min</sup><span class="header_text">Minutes Played</span></th>
+                        <th title="Hours Running App on Steam" id="hours_played_header" class="hours_played_col"><i class="fa fa-time"></i><sup>hrs</sup><span class="header_text">Hours Played</span></th>
+                        <th title="Default App Price in USD" id="store_price_default_usd_header" class="store_price_default_usd_col"><i class="fa fa-usd"></i><span class="header_text">Default Price (USD)</span></th>
+                        <th title="Price/Hours Played Ratio" id="price_hours_header" class="price_hours_col"><i class="fa fa-usd"></i><span class="header_text">Price / Hours Played</span></th>
+                        <th title="App Release Date" id="release_date_header" class="release_date_col"><i class="fa fa-calendar"></i><span class="header_text">Release Date</span></th>
+                        <th title="App Developer(s)" id="developer_header" class="developer_col"><i class="fa fa-cogs"></i><span class="header_text">Developers</span></th>
+                        <th title="App Publisher(s)" id="publisher_header" class="publisher_col"><i class="fa fa-briefcase"></i><span class="header_text">Publishers</span></th>
+                        <th title="App Metascore" id="metascore_header" class="metascore_col"><i class="fa fa-trophy"></i><span class="header_text">Metascore</span></th>
+                        <th title="App Windows Compatibility" id="os_windows_header" class="os_windows_col"><i class="fa fa-windows"></i><span class="header_text">Windows</span></th>
+                        <th title="App Mac Compatibility" id="os_mac_header" class="os_mac_col"><i class="fa fa-apple"></i><span class="header_text">Mac</span></th>
+                        <th title="App Linux Compatibility" id="os_linux_header" class="os_linux_col"><i class="fa fa-linux"></i><span class="header_text">Linux</span></th>
+                        <th title="App Install Size (Megabytes)" id="size_mb_header" class="size_mb_col"><i class="fa fa-hdd"></i><sup>MB</sup><span class="header_text">Install Size (MB)</span></th>
+                        <th title="App Install Size (Gigabytes)" id="size_gb_header" class="size_gb_col"><i class="fa fa-hdd"></i><sup>GB</sup><span class="header_text">Install Size (GB)</span></th>
+                        <th title="App Controller Support" id="controller_support_header" class="controller_support_col"><i class="fa fa-gamepad"></i><span class="header_text">Controller Support</span></th>
+                        <th title="App Multiplayer Support" id="multiplayer_header" class="multiplayer_col"><i class="fa fa-group"></i><span class="header_text">Multiplayer</span></th>
+                        <!-- <th title="App Languages" id="languages_header" class="languages_col"><i class="fa fa-globe"></i><span class="header_text">Languages</span></th> -->
+                        <th title="App Genres" id="genres_header" class="genres_col"><i class="fa fa-rocket"></i><span class="header_text">Genres</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                <!-- User Apps Start -->
+                {% for x in api_return['Account']['UserApps']['Apps'] %}
+                    {% if x['missing'] == False %}
+                        <tr class="app-row">
+                            <td id="{{ x.app_id }}_type" class="type_col">{% if x.app_type|upper == 'DLC' %}{{ x.app_type|upper }}{% else %}{{ x.app_type|capitalize }}{% endif %}</td>
+                            <td id="{{ x.app_id }}_id" class="id_col">{{ x.app_id }}</td>
+                            <td id="{{ x.app_id }}_icon" class="icon_col"><img src="{{ x.icon }}" /></td>
+                            <td id="{{ x.app_id }}_title" class="title_col"><a href="http://store.steampowered.com/app/{{ x.app_id }}/" target="_blank">{{ x.app_title }}</a></td>
+                            <td id="{{ x.app_id }}_minutes_played" class="minutes_played_col">{{ x.minutes_played }}</td>
+                            <td id="{{ x.app_id }}_hours_played" class="hours_played_col">{{ x.hours_played }}</td>
+                            <td id="{{ x.app_id }}_store_price_default_usd" class="store_price_default_usd_col">{{ x.store_price_default_usd }}</td>
+                            <td id="{{ x.app_id }}_price_hours" class="price_hours_col">{{ x.price_hours }}</td>
+                            <td id="{{ x.app_id }}_release_date" class="release_date_col">{{ x.release_date }}</td>
+                            <td id="{{ x.app_id }}_developer" class="developer_col">
+                                {% for d in x.developers %}
+                                    <a href="http://store.steampowered.com/search/?developer={{ d }}" target="_blank">{{ d }}</a>{% if not loop.last %}, {% endif %}
+                                {% endfor %}
+                            </td>
+                            <td id="{{ x.app_id }}_publisher" class="publisher_col">
+                                {% for p in x.publishers %}
+                                    <a href="http://store.steampowered.com/search/?publisher={{ p }}" target="_blank">{{ p }}</a>{% if not loop.last %}, {% endif %}
+                                {% endfor %}
+                            </td>
+                            <td id="{{ x.app_id }}_metascore" class="metascore_col text-centered"><a href="{{ x.metascore_link }}" target="_blank">{{ x.metascore }}</a></td>
+                            <td id="{{ x.app_id }}_os_windows" class="os_windows_col text-centered">
+                                {% if x.os_windows == True %}
+                                    <i class="fa fa-check"><span style="display:none;">1</span></i>
+                                {% endif %}
+                                {% if x.os_windows == False %}
+                                    <i class="fa fa-remove"><span style="display:none;">0</span></i>
+                                {% endif %}
+                            </td>
+                            <td id="{{ x.app_id }}_os_mac" class="os_mac_col text-centered">
+                                {% if x.os_mac == True %}
+                                    <i class="fa fa-check"><span style="display:none;">1</span></i>
+                                {% endif %}
+                                {% if x.os_mac == False %}
+                                    <i class="fa fa-remove"><span style="display:none;">0</span></i>
+                                {% endif %}
+                            </td>
+                            <td id="{{ x.app_id }}_os_linux" class="os_linux_col text-centered">
+                                {% if x.os_linux == True %}
+                                    <i class="fa fa-check"><span style="display:none;">1</span></i>
+                                {% endif %}
+                                {% if x.os_linux == False %}
+                                    <i class="fa fa-remove"><span style="display:none;">0</span></i>
+                                {% endif %}
+                            </td>
+                            <td id="{{ x.app_id }}_size_mb" class="size_mb_col">{{ x.size_mb|round|int }}</td>
+                            <td id="{{ x.app_id }}_size_gb" class="size_gb_col">{{ x.size_gb }}</td>
+                            <td id="{{ x.app_id }}_controller_support" class="controller_support_col text-centered">{{ x.controller_support }}</td>
+                            <td id="{{ x.app_id }}_multiplayer" class="multiplayer_col text-centered">
+                                {% if x.multiplayer == True %}
+                                    <i class="fa fa-check"><span style="display:none;">1</span></i>
+                                {% endif %}
+                                {% if x.multiplayer == False %}
+                                    <i class="fa fa-remove"><span style="display:none;">0</span></i>
+                                {% endif %}
+                            </td>
+                            <!-- <td id="{{ x.app_id }}_languages" class="languages_col">{{ x.languages|join(', ') }}</td> -->
+                            <td id="{{ x.app_id }}_genres" class="genres_col">
+                                {% for g in x.genres %}
+                                    <a href="http://store.steampowered.com/tag/en/{{ g }}/" target="_blank">{{ g }}</a>{% if not loop.last %}, {% endif %}
+                                {% endfor %}
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr class="app-row">
+                            <td id="{{ x.app_id }}_type" class="type_col"></td>
+                            <td id="{{ x.app_id }}_id" class="id_col">{{ x.app_id }}</td>
+                            <td id="{{ x.app_id }}_icon" class="icon_col"></td>
+                            <td id="{{ x.app_id }}_title" class="title_col"><a href="http://store.steampowered.com/app/{{ x.app_id }}/" target="_blank">Unknown</a></td>
+                            <td id="{{ x.app_id }}_minutes_played" class="minutes_played_col">{{ x.minutes_played }}</td>
+                            <td id="{{ x.app_id }}_hours_played" class="hours_played_col">{{ x.hours_played }}</td>
+                            <td id="{{ x.app_id }}_store_price_default_usd" class="store_price_default_usd_col"></td>
+                            <td id="{{ x.app_id }}_price_hours" class="price_hours_col"></td>
+                            <td id="{{ x.app_id }}_release_date" class="release_date_col"></td>
+                            <td id="{{ x.app_id }}_developer" class="developer_col"></td>
+                            <td id="{{ x.app_id }}_publisher" class="publisher_col"></td>
+                            <td id="{{ x.app_id }}_metascore" class="metascore_col text-centered"></td>
+                            <td id="{{ x.app_id }}_os_windows" class="os_windows_col text-centered"></td>
+                            <td id="{{ x.app_id }}_os_mac" class="os_mac_col text-centered"></td>
+                            <td id="{{ x.app_id }}_os_linux" class="os_linux_col text-centered"></td>
+                            <td id="{{ x.app_id }}_size_mb" class="size_mb_col"></td>
+                            <td id="{{ x.app_id }}_size_gb" class="size_gb_col"></td>
+                            <td id="{{ x.app_id }}_controller_support" class="controller_support_col text-centered"></td>
+                            <td id="{{ x.app_id }}_multiplayer" class="multiplayer_col text-centered"></td>
+                            {# <td id="{{ x.app_id }}_languages" class="languages_col"></td> #}
+                            <td id="{{ x.app_id }}_genres" class="genres_col"></td>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+                </tbody>
+                <!-- Apps Footer Start -->
+                <tfoot>
+                    <tr class="app-foot-row">
+                        <td id="type_footer" class="type_col"></td>
+                        <td id="id_footer" class="id_col"></td>
+                        <td id="icon_footer" class="icon_col"></td>
+                        <td id="title_footer" class="title_col title_sum"></td>
+                        <td id="minutes_played_footer" class="minutes_played_col minutes_played_sum"></td>
+                        <td id="hours_played_footer" class="hours_played_col hours_played_sum"></td>
+                        <td id="store_price_default_usd_footer" class="store_price_default_usd_col store_price_default_usd_sum"></td>
+                        <td id="price_hours_footer" class="price_hours_col price_hours_sum"></td>
+                        <td id="release_date_footer" class="release_date_col"></td>
+                        <td id="developer_footer" class="developer_col"></td>
+                        <td id="publisher_footer" class="publisher_col"></td>
+                        <td id="metascore_footer" class="metascore_col metascore_sum text-centered"></td>
+                        <td id="os_windows_footer" class="os_windows_col os_windows_sum text-centered"></td>
+                        <td id="os_mac_footer" class="os_mac_col os_mac_sum text-centered"></td>
+                        <td id="os_linux_footer" class="os_linux_col os_linux_sum text-centered"></td>
+                        <td id="size_mb_footer" class="size_mb_col size_mb_sum"></td>
+                        <td id="size_gb_footer" class="size_gb_col size_gb_sum"></td>
+                        <td id="controller_support_footer" class="controller_support_col controller_support_sum text-centered"></td>
+                        <td id="multiplayer_footer" class="multiplayer_col multiplayer_sum text-centered"></td>
+                        <!-- <td id="languages_footer" class="languages_col"></td> -->
+                        <td id="genres_footer" class="genres_col"></td>
+                    </tr>
+                </tfoot>
+            </table>
+        {% endif %}
+    </div>
+{% endblock %}
+{% block after_body_content %}
+{# Bug Reporting #}
+<div class="lightscreen-bug-form">
+    <p style="margin:0px auto;font-size:0.75em;font-style:italic;">Notice an issue? Is a value wrong? Send the details along here and magic shadow-gnomes will get to work fixing it right away (as their ancient compact demands).</p>
+    <hr>
+    <label>App ID<br>
+        <select id="app_id_bug">
+            <option value="-">-</option>
+        </select>
+    </label><br>
+    <label>Wrong Field<br>
+        <select id="field_bug">
+            <option value="-">-</option>
+        </select>
+    </label><br>
+    <label>Correct Value<br><input type="text" id="value_bug" />
+    </label><br>
+    <label>Notes<br><textarea rows="2" maxlength="2000" id="notes_bug" style="max-width:100%;max-height:150px;"></textarea></label><br>
+    <label>Contact info (if you want a response)<br><input type="text" id="contact_bug" /></label><br>
+    <input type="text" id="account_bug" class="hidden" value="{{ api_return.Account.steamid }}"/><br>
+    <div class="submit-button">Submit</div>
+</div>
+<iframe name="bug_track" src="https://docs.google.com/spreadsheet/embeddedform?formkey=dGp4LUxwOXZKVXdYakhGRHdmN3Q3Ync6MQ" style="display:none;"></iframe>
+<form id="bug_form" action="https://docs.google.com/spreadsheet/formResponse?formkey=dGp4LUxwOXZKVXdYakhGRHdmN3Q3Ync6MQ" style="display:none;" method="POST" target="bug_track">
+    <input type="text" name="entry.0.single" value="" class="ss-q-short bug_appid" id="entry_0">
+    <input type="text" name="entry.1.single" value="" class="ss-q-short bug_field" id="entry_1">
+    <input type="text" name="entry.2.single" value="" class="ss-q-short bug_corr_val" id="entry_2">
+    <input type="text" name="entry.3.single" value="" class="ss-q-short bug_add_notes" id="entry_3">
+    <input type="text" name="entry.4.single" value="" class="ss-q-short bug_contact" id="entry_4">
+    <input type="text" name="entry.5.single" value="{{ api_return.Account.steamid }}" class="ss-q-short bug_account" id="entry_5">
+</form>
+{% endblock %}
+{% block custom_footer %}
+{% endblock %}
+{% block page_js %}
+    <script src="{{ url_for('static', filename='js/d3.v3.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/TableTools.nightly.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/ZeroClipboard.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/ColVis.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/ColReorder.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/FixedHeader.min.js') }}"></script>
+    <!-- jquery.dataTables.min.js by SpryMedia "http://www.datatables.net/" -->
+    <script type="text/javascript">
+    $(document).ready(function(){
+        function tableTotals(data_set){
+            var totals = {
+                'app_count':0,
+                'minutes_total':0,
+                'minutes_average':0,
+                'hours_total':0,
+                'hours_average':0,
+                'price_total':0,
+                'price_average':0,
+                'price_hours_total':0,
+                'average_metascore':0,
+                'metascore_count':0,
+                'windows_total':0,
+                'mac_total':0,
+                'linux_total':0,
+                'mb_install_total':0,
+                'mb_install_average':0,
+                'gb_install_total':0,
+                'gb_install_average':0,
+                'controller_total':0,
+                'multiplayer_total':0
+            };
+
+            $.each(data_set, function(i,v){
+                if ($.isNumeric(v[4])){
+                    totals.minutes_total += parseInt(v[4]);
+                }
+                if ($.isNumeric(v[5])){
+                    totals.hours_total += parseFloat(v[5]);
+                }
+                if ($.isNumeric(v[6])){
+                    totals.price_total += parseFloat(v[6]);
+                }
+                if ($.isNumeric(v[11].split(/<\/|\">/)[1])){
+                    totals.metascore_count += 1;
+                    totals.average_metascore += parseInt(v[11].split(/<\/|\">/)[1]);
+                }
+                if (v[12].split(/<\/span|none;\">/)[1] === '1'){
+                    totals.windows_total += 1;
+                }
+                if (v[13].split(/<\/span|none;\">/)[1] === '1'){
+                    totals.mac_total += 1;
+                }
+                if (v[14].split(/<\/span|none;\">/)[1] === '1'){
+                    totals.linux_total += 1;
+                }
+                if ($.isNumeric(v[15])){
+                    totals.mb_install_total += parseInt(v[15]);
+                }
+                if ($.isNumeric(v[16])){
+                    totals.gb_install_total += parseFloat(v[16]);
+                }
+                if ((v[17] === 'full') || (v[17] === 'partial')){
+                    totals.controller_total += 1;
+                }
+                if (v[18].split(/<\/span|none;\">/)[1] === '1'){
+                    totals.multiplayer_total += 1;
+                }
+            });
+            totals.app_count = data_set.length;
+            totals.average_metascore /= totals.metascore_count;
+            totals.average_metascore = parseInt(totals.average_metascore);
+            if (!$.isNumeric(totals.average_metascore)){
+                totals.average_metascore = 0;
+            }
+            totals.price_average = Math.round((totals.price_total/totals.app_count)*100)/100;
+            if (!$.isNumeric(totals.price_average)){
+                totals.price_average = 0;
+            }
+            totals.price_total = Math.round(totals.price_total*100)/100;
+            totals.minutes_average = Math.round((totals.minutes_total/totals.app_count)*10)/10;
+            if (!$.isNumeric(totals.minutes_average)){
+                totals.minutes_average = 0;
+            }
+            totals.hours_total = Math.round(totals.hours_total*10)/10;
+            totals.hours_average = Math.round((totals.hours_total/totals.app_count)*10)/10;
+            if (!$.isNumeric(totals.hours_average)){
+                totals.hours_average = 0;
+            }
+            totals.gb_install_total = Math.round(totals.gb_install_total*10)/10;
+            totals.gb_install_average = Math.round((totals.gb_install_total/totals.app_count)*10)/10;
+            if (!$.isNumeric(totals.gb_install_average)){
+                totals.gb_install_average = 0;
+            }
+            totals.mb_install_average = Math.round((totals.mb_install_total/totals.app_count)*10)/10;
+            if (!$.isNumeric(totals.mb_install_average)){
+                totals.mb_install_average = 0;
+            }
+            totals.price_hours_total = Math.round((totals.price_total/totals.hours_total)*10)/10;
+            return totals;
+        }
+
+        function updateFields(totals_json){
+            $('#type_footer').html('Totals:');
+            // $('#id_footer').html(totals_json.);
+            // $('#icon_footer').html(totals_json.);
+            $('.title_sum').html(totals_json.app_count +' selected');
+            $('.minutes_played_sum').html('<div style="white-space:nowrap;">'+totals_json.minutes_total+' min (total)</div><div style="margin-top:0.75em;white-space:nowrap;">'+totals_json.minutes_average+' min (avg)</div>');
+            $('.hours_played_sum').html('<div style="white-space:nowrap;">'+totals_json.hours_total+' hrs (total)</div><div style="margin-top:0.75em;white-space:nowrap;">'+totals_json.hours_average+' hrs (avg)</div>');
+            $('.store_price_default_usd_sum').html('<div style="white-space:nowrap;">$'+totals_json.price_total+' (total)</div><div style="margin-top:0.75em;white-space:nowrap;">$'+totals_json.price_average+' (avg)</div>');
+            $('.price_hours_sum').html(totals_json.price_hours_total+' $/hrs');
+            // $('#release_date_footer').html(totals_json.);
+            // $('#developer_footer').html(totals_json.);
+            // $('#publisher_footer').html(totals_json.);
+            $('.metascore_sum').html(totals_json.average_metascore+' (avg)');
+            $('.os_windows_sum').html(totals_json.windows_total);
+            $('.os_mac_sum').html(totals_json.mac_total);
+            $('.os_linux_sum').html(totals_json.linux_total);
+            $('.size_mb_sum').html('<div style="white-space:nowrap;">'+totals_json.mb_install_total+' MB (total)</div><div style="margin-top:0.75em;white-space:nowrap;">'+totals_json.mb_install_average+' MB (avg)</div>');
+            $('.size_gb_sum').html('<div style="white-space:nowrap;">'+totals_json.gb_install_total+' GB (total)</div><div style="margin-top:0.75em;white-space:nowrap;">'+totals_json.gb_install_average+' GB (avg)</div>');
+            $('.controller_support_sum').html(totals_json.controller_total);
+            $('.multiplayer_sum').html(totals_json.multiplayer_total);
+            // $('#genres_footer').html(totals_json.);
+
+            // Update Summary Message
+            $('.hours_played_container').html(totals_json.hours_total);
+            $('.selection_count_container').html(totals_json.app_count);
+            $('.usd_sum_container').html(totals_json.price_total);
+            $('.gb_sum_container').html(totals_json.gb_install_total);
+        }
+
+        function timeSince(date) {
+            var seconds = Math.floor((new Date() - date) / 1000);
+            var interval = Math.floor(seconds / 31536000);
+            if (interval > 1) {
+                return interval + " years";
+            }
+            interval = Math.floor(seconds / 2592000);
+            if (interval > 1) {
+                return interval + " months";
+            }
+            interval = Math.floor(seconds / 86400);
+            if (interval > 1) {
+                return interval + " days";
+            }
+            interval = Math.floor(seconds / 3600);
+            if (interval > 1) {
+                return interval + " hours";
+            }
+            interval = Math.floor(seconds / 60);
+            if (interval > 1) {
+                return interval + " minutes";
+            }
+            return Math.floor(seconds) + " seconds";
+        }
+
+        function selectionPreset(preset){
+            var all_rows = oTable.fnGetNodes();
+            var table_instance = TableTools.fnGetInstance('app-list');
+            if (preset === 'invert'){
+                $.each(all_rows, function(i,v){
+                    if (table_instance.fnIsSelected(v)){
+                        table_instance.fnDeselect(v);
+                    }
+                    else{
+                        table_instance.fnSelect(v);
+                    }
+                });
+            }
+            if (preset === 'played'){
+                $.each(all_rows, function(i,v){
+                    if (parseFloat($(v).children('.hours_played_col').text())>0){
+                        table_instance.fnSelect(v);
+                    }
+                });
+            }
+            if (preset === 'games'){
+                $.each(all_rows, function(i,v){
+                    if ($(v).children('.type_col').text() === 'Game'){
+                        table_instance.fnSelect(v);
+                    }
+                });
+            }
+            if (preset === 'apps'){
+                $.each(all_rows, function(i,v){
+                    if ($(v).children('.type_col').text() === 'App'){
+                        table_instance.fnSelect(v);
+                    }
+                });
+            }
+            if (preset === 'dlc'){
+                $.each(all_rows, function(i,v){
+                    if ($(v).children('.type_col').text() === 'DLC'){
+                        table_instance.fnSelect(v);
+                    }
+                });
+            }
+            if (preset === 'movies'){
+                $.each(all_rows, function(i,v){
+                    if ($(v).children('.type_col').text() === 'Movie'){
+                        table_instance.fnSelect(v);
+                    }
+                });
+            }
+            if (preset === 'mac'){
+                $.each(all_rows, function(i,v){
+                    if ($(v).find('.os_mac_col i span').text() === '1'){
+                        table_instance.fnSelect(v);
+                    }
+                });
+            }
+            if (preset === 'linux'){
+                $.each(all_rows, function(i,v){
+                    if ($(v).find('.os_linux_col i span').text() === '1'){
+                        table_instance.fnSelect(v);
+                    }
+                });
+            }
+            if (preset === 'windows'){
+                $.each(all_rows, function(i,v){
+                    if ($(v).find('.os_windows_col i span').text() === '1'){
+                        table_instance.fnSelect(v);
+                    }
+                });
+            }
+            if (preset === 'multiplayer'){
+                $.each(all_rows, function(i,v){
+                    if (($(v).find('.multiplayer_col .fa.fa-check').length > 0)){
+                        table_instance.fnSelect(v);
+                    }
+                });
+            }
+            if (preset === 'controller'){
+                $.each(all_rows, function(i,v){
+                    if (($(v).children('.controller_support_col').text() === 'partial') || ($(v).children('.controller_support_col').text() === 'full')){
+                        table_instance.fnSelect(v);
+                    }
+                });
+            }
+        }
+
+        function sortNumber(a,b){
+            return a-b;
+        }
+
+        var tableToExcel = (function() {
+            var uri = 'data:application/vnd.ms-excel;base64,',
+                template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--><meta http-equiv="content-type" content="text/plain; charset=UTF-8"/></head><body><table>{table}</table></body></html>',
+                base64 = function(s) {
+                    return window.btoa(unescape(encodeURIComponent(s)));
+                }, format = function(s, c) {
+                    return s.replace(/{(\w+)}/g, function(m, p) {
+                        return c[p];
+                    });
+                };
+            return function(table, name) {
+                if (!table.nodeType) table = document.getElementById(table);
+                var ctx = {
+                    worksheet: name || 'Worksheet',
+                    table: table.innerHTML
+                };
+                window.location.href = uri + base64(format(template, ctx));
+            };
+        })();
+
+        {% if api_return.QueryStatus.error == True %}
+            // Add search box to tableheader
+            $("div.account_search").html('<form action="./account" method="get" target="" title="Account Search" style="width:215px;margin:auto;height:27px;"><input id="urltext" style="margin-right:0px;height:27px;padding:0px 5px;background-color:#eeeeee;outline:none;display:inline-block;border-width:0px;" type="text" name="username" size="20" autocomplete="off"><input type="submit" style="margin-left:0px;-webkit-border-top-right-radius:3px;-webkit-border-bottom-right-radius:3px;-moz-border-radius-topright:3px;-moz-border-radius-bottomright:3px;border-top-right-radius:3px;border-bottom-right-radius:3px;height:27px;cursor:pointer;color:#e5e4dc;padding:0px 10px;background-color:#61892b;border-width:0px;border-left:1px solid #666;font-family:FontAwesome;display:inline-block;" value="" title="Account Search"></form>');
+
+            // Add listener for account search form
+            $('.account_search form').submit(function( event ) {
+                $('#lightscreen, #lightscreenform').show();
+            });
+
+            // When everything is done processing, hide the lightscreen
+            $('#lightscreen, #lightscreenform').hide();
+        {% else %}
+            var table_data,
+                selected_data,
+                oTable,
+                oFH;
+
+            // Hacky workaround to fix .browser() method deprecated in jQuery 1.9, which FixedHeader requires
+            jQuery.browser={};(function(){jQuery.browser.msie=false;
+            jQuery.browser.version=0;if(navigator.userAgent.match(/MSIE ([0-9]+)\./)){
+            jQuery.browser.msie=true;jQuery.browser.version=RegExp.$1;}})();
+
+            var paginate_p;
+                user_apps_count={{ api_return['Account']['UserApps']['app_count'] }};
+
+            // Set table paginate setting if there are a lot of records
+            if (user_apps_count < 300){
+                paginate_p = false;
+            }
+            else{
+                paginate_p = true;
+            }
+
+            // Initialize Table
+            oTable = $('#app-list').dataTable({
+                "aaSorting": [[ 5, "desc" ]],
+                "bLengthChange":false, // toggles record number option dropdown when pagination occurs
+                "iDisplayLength": 100, // number of records to display at a time when pageination is enabled
+                "bPaginate": paginate_p, // toggle pagination for long lists
+                "sPaginationType": "full_numbers", // Which pagination style to use
+                "bProcessing": true, // toggle processing indicator for large tables
+                "bFilter": true, // toggle search box
+                "bSort": true, // toggle sorting
+                "bInfo": true, // toggle pagination summary
+                "bAutoWidth": false, // toggle automatic column width calculation. This can be disabled as an optimisation
+                "sDom": 'RCTlfrtip',
+                "aoColumnDefs": [
+                    { "bVisible": false, "aTargets": [ 4, 16 ] },
+                    { "sType": "numeric", "aTargets": [ 1,4,5,6,7,15,16 ] },
+                    { "sType": "date", "aTargets": [ 8 ] }
+                ],
+                "oLanguage": {
+                    "sSearch": '<i class="fa fa-filter" aria-hidden="true"></i> Filter'
+                },
+                "oTableTools": {
+                    "fnRowDeselected":function(nodes){
+                        selected_data = tableTotals(TableTools.fnGetInstance('app-list').fnGetSelectedData());
+                        updateFields(selected_data);
+                        oFH.fnUpdate();
+                    },
+                    "fnRowSelected":function(nodes){
+                        selected_data = tableTotals(TableTools.fnGetInstance('app-list').fnGetSelectedData());
+                        updateFields(selected_data);
+                        oFH.fnUpdate();
+                    },
+                    "sSwfPath": "{{ url_for('static', filename='swf/copy_csv_xls.swf') }}",
+                    "sSelectedClass": "row-selected",
+                    "aButtons": [
+                        {
+                            "sExtends":    "collection",
+                            "sButtonText": "Select",
+                            "aButtons":    [
+                                "select_all",
+                                "select_none",
+                                {
+                                    "sExtends":"text",
+                                    "sButtonText": "Invert Selection",
+                                    "fnClick": function ( nButton, oConfig, oFlash ) {
+                                        selectionPreset('invert');
+                                    }
+                                },
+                                {
+                                    "sExtends":"text",
+                                    "sButtonText": "Played Apps",
+                                    "fnClick": function ( nButton, oConfig, oFlash ) {
+                                        selectionPreset('played');
+                                    }
+                                },
+                                {
+                                    "sExtends":"text",
+                                    "sButtonText":"Games",
+                                    "fnClick": function ( nButton, oConfig, oFlash ) {
+                                        selectionPreset('games');
+                                    }
+                                },
+                                {
+                                    "sExtends":"text",
+                                    "sButtonText":"Applications",
+                                    "fnClick": function ( nButton, oConfig, oFlash ) {
+                                        selectionPreset('apps');
+                                    }
+                                },
+                                {
+                                    "sExtends":"text",
+                                    "sButtonText":"DLC",
+                                    "fnClick": function ( nButton, oConfig, oFlash ) {
+                                        selectionPreset('dlc');
+                                    }
+                                },
+                                {
+                                    "sExtends":"text",
+                                    "sButtonText":"Movies",
+                                    "fnClick": function ( nButton, oConfig, oFlash ) {
+                                        selectionPreset('movies');
+                                    }
+                                },
+                                {
+                                    "sExtends":"text",
+                                    "sButtonText":"Mac Apps",
+                                    "fnClick": function ( nButton, oConfig, oFlash ) {
+                                        selectionPreset('mac');
+                                    }
+                                },
+                                {
+                                    "sExtends":"text",
+                                    "sButtonText":"Linux Apps",
+                                    "fnClick": function ( nButton, oConfig, oFlash ) {
+                                        selectionPreset('linux');
+                                    }
+                                },
+                                {
+                                    "sExtends":"text",
+                                    "sButtonText":"Windows Apps",
+                                    "fnClick": function ( nButton, oConfig, oFlash ) {
+                                        selectionPreset('windows');
+                                    }
+                                },
+                                {
+                                    "sExtends":"text",
+                                    "sButtonText":"Multiplayer Support",
+                                    "fnClick": function ( nButton, oConfig, oFlash ) {
+                                        selectionPreset('multiplayer');
+                                    }
+                                },
+                                {
+                                    "sExtends":"text",
+                                    "sButtonText":"Controller Support",
+                                    "fnClick": function ( nButton, oConfig, oFlash ) {
+                                        selectionPreset('controller');
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "sExtends": "collection",
+                            "sButtonText": "Save",
+                            "aButtons": [
+                                {
+                                    "sExtends": "csv",
+                                    "sButtonText": "csv",
+                                    "mColumns": [ 0,1,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19 ],
+                                    "bFooter": false,
+                                    "sFileName": "{{ api_return.Account.steamid }} - Steam Account Summary.csv"
+                                },
+                                {
+                                    "sExtends": "xls",
+                                    "sButtonText": "Excel",
+                                    "mColumns": [ 0,1,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19 ],
+                                    "bFooter": false,
+                                    "sFileName": "{{ api_return.Account.steamid }} - Steam Account Summary.xls"
+                                },
+                                {
+                                    "sExtends": "copy",
+                                    "sButtonText": "copy",
+                                    "bFooter": false
+                                },
+                                {
+                                    "sExtends": "csv",
+                                    "sButtonText": "csv (selection only)",
+                                    "bSelectedOnly": true,
+                                    "mColumns": [ 0,1,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19 ],
+                                    "bFooter": false,
+                                    "sFileName": "{{ api_return.Account.steamid }} - Steam Account Selection.csv"
+                                },
+                                {
+                                    "sExtends": "xls",
+                                    "sButtonText": "Excel (selection only)",
+                                    "bSelectedOnly": true,
+                                    "mColumns": [ 0,1,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19 ],
+                                    "bFooter": false,
+                                    "sFileName": "{{ api_return.Account.steamid }} - Steam Account Selection.xls"
+                                },
+                                {
+                                    "sExtends": "copy",
+                                    "sButtonText": "copy (selection only)",
+                                    "bSelectedOnly": true,
+                                    "bFooter": false
+                                }
+                            ]
+                        },
+                        "print"
+                    ],
+                    "sRowSelect": "multi"
+                }
+            });
+
+            // Initialize sticky header
+            oFH = new FixedHeader(oTable);
+
+            // Generic Listener if I can't get ColVis to play nicely with FixedHeader
+            // $('.ColVis_Button').click(function(){oFH.fnUpdate();});
+
+            // Select all rows by default
+            TableTools.fnGetInstance('app-list').fnSelectAll();
+
+            // Calculate totals
+            table_data = tableTotals($('#app-list').dataTable().fnGetData());
+            selected_data = tableTotals(TableTools.fnGetInstance('app-list').fnGetSelectedData());
+
+            // Update relvant fields with totals data
+            updateFields(selected_data);
+            // $('.account_age_container').html(timeSince(Date.parse('{{ api_return.Account.timecreated }}'))); // Date.parse is inconsistent between browsers and sometimes returns NaN
+            var acc = '{{ api_return.Account.timecreated }}'.split(/[- :]/);
+            $('.account_age_container').html(timeSince(new Date(acc[0], acc[1]-1, acc[2], acc[3], acc[4], acc[5])));
+
+            // Make 'last logged in' human readable
+            // $('#last_logoff_datetime').html(timeSince(Date.parse('{{ api_return.Account.lastlogoff }}'))+' ago');
+            var llog = '{{ api_return.Account.lastlogoff }}'.split(/[- :]/);
+            $('#last_logoff_datetime').html(timeSince(new Date(llog[0], llog[1]-1, llog[2], llog[3], llog[4], llog[5]))+' ago');
+
+            // Set export listeners for generic xls export
+            // $('#export_xls').click(function(){
+            //     tableToExcel('app-list','Account Apps');
+            // });
+
+            // Any prices listed as 'None' will be treated as '0'
+            $.each($('#app-list').dataTable().fnGetData(),function(i,v){if (v[6] === 'None'){v[6]='0';}});
+
+            // Update the Twitter share with the account info
+            $('#twitter_share').attr('href', 'https://twitter.com/share?url={{ config.DOMAIN_URL }}/account?username={{ api_return.Account.steamid }}&text=My%20%23Steam%20account%20has%20'+table_data.app_count+'%20items%20valued%20at%20%24'+table_data.price_total+'%20and%20requires%20'+table_data.gb_install_total+'%20GB%20of%20disk%20space%3A');
+
+            // Update the Fixed Header because sometimes it doesn't position properly on initialization
+            oFH.fnUpdate();
+
+            // Set up bug report form
+            var app_id_sort=[];
+            $(oTable.fnGetData()).each(function(){
+                app_id_sort.push(Number(this[1]));
+            });
+            app_id_sort.sort(sortNumber);
+            $(app_id_sort).each(function(){
+                $('#app_id_bug').append('<option value="'+this+'">'+this+'</option>');
+            });
+            $(oTable.fnSettings().aoColumns).each(function(){
+                $('#field_bug').append('<option value="'+$(this.nTh).find('span').text()+'">'+$(this.nTh).find('span').text()+'</option>');
+            });
+            $('.lightscreen-bug-form option, .lightscreen-bug-form input, .lightscreen-bug-form textarea').change(function(){
+                $('#bug_form .bug_appid').val($('#app_id_bug').val());
+                $('#bug_form .bug_field').val($('#field_bug').val());
+                $('#bug_form .bug_corr_val').val($('#value_bug').val());
+                $('#bug_form .bug_add_notes').val($('#notes_bug').val());
+                $('#bug_form .bug_contact').val($('#contact_bug').val());
+                $('#bug_form .bug_account').val($('#account_bug').val());
+            });
+            $('.bug-report *').click(function(){
+                $('#app_id_bug, #field_bug, #value_bug, #notes_bug, #contact_bug, #account_bug').val('');
+                $('#bug_form .bug_appid, #bug_form .bug_field, #bug_form .bug_corr_val, #bug_form .bug_add_notes, #bug_form .bug_contact, #bug_form .bug_account').val('');
+                $('#lightscreen, .lightscreen-bug-form').show();
+            });
+            $('.lightscreen-bug-form .submit-button').click(function(){
+                if (($('#value_bug').val()) || ($('#notes_bug').val())){
+                    $('#bug_form').submit();
+                    $('#lightscreen, .lightscreen-bug-form').hide();
+                    alert('Thanks for passing along the issue!');
+                }
+                else{
+                    alert('You need to enter a new value or notes to submit an error.');
+                }
+            });
+
+            // Make lightscreen and popups go away on lightscreen click and esc key
+            $('#lightscreen').click(function(){
+                $('#lightscreen, #lightscreenform, .lightscreen-bug-form').hide();
+            });
+            $(document).keyup(function(e) {
+                if (e.keyCode == 27) {
+                    $('#lightscreen, #lightscreenform, .lightscreen-bug-form').hide();
+                }
+            });
+
+            // When everything is done processing, hide the lightscreen
+            $('#lightscreen, #lightscreenform').hide();
+        {% endif %}
+    });
+    </script>
+{% endblock %}

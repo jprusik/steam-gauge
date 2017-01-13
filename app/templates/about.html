@@ -1,0 +1,32 @@
+﻿{% extends "base.html" %}
+{% block title %}About {{ config.APP_NAME }}{% endblock %}
+{% block head %}
+        <!--[if gte IE 9]>
+            <style type="text/css">
+                #headerrow th, #summary td{
+                   filter: none;
+                }
+            </style>
+        <![endif]-->
+        <style type="text/css">
+            h3{
+                color:#eeeeee;
+                text-shadow: #3d3d3d 1px 1px 1px;
+            }
+            p{
+                color:#B0AEAC;
+            }
+        </style>
+{% endblock %}
+{% block content %}
+    <div style="margin:0px auto 20px auto;width:100%;max-width:640px;">
+        <div style="margin:2em auto;text-align:left;">
+            <h2>About the App</h2>
+            <p>{{ config.APP_NAME }} is a <a href="http://www.python.org/" target="_blank">Python-based</a> web app driven by <a href="http://flask.pocoo.org/" target="_blank">Flask</a>. It has undergone several revisions, including a migration from Python 2 to 3. It makes use of Steam's Web API, Big Picture API, and several custom Python scripts that scrape data from the Steam Store pages (if necessary). That metadata is stored in a database for easy retrieval by the {{ config.APP_NAME }} app. {{ config.APP_NAME }} does not currently store any information about your account (your login id is stored in your browser as a cookie). The app code is available for review at <a href="https://github.com/jprusik/steam-gauge" target="_blank">https://github.com/jprusik/steam-gauge</a></p>
+            <br/>
+            <h2>About Me</h2>
+            <p>My name is {{ config.AUTHOR.NAME }}, and I'm a Boston-based Full Stack web engineer who specializes in Python, SQL, and JavaScript. My work has been featured on <a href="http://techcrunch.com/2013/04/01/steam-gauge-gauges-the-sizeprice-of-your-steam/" target="_blank">TechCrunch</a> and the front page of <a href="https://news.ycombinator.com/item?id=5472548" target="_blank">Hacker News</a>. I like building things that people will use and find useful. <a href="{{ config.DOMAIN_URL }}">{{ config.PRETTY_DOMAIN_URL }}</a> is my first Python web app.</p>
+            <p>I can be contacted via <a href="{{ config.AUTHOR.SOCIAL_PROFILE.FACEBOOK }}" target="_blank">Facebook</a>, <a href="{{ config.AUTHOR.SOCIAL_PROFILE.TWITTER }}" target="_blank">Twitter</a>, <a href="{{ config.AUTHOR.SOCIAL_PROFILE.LINKEDIN }}" target="_blank">LinkedIn</a>, <a href="{{ config.AUTHOR.SOCIAL_PROFILE.GOOGLEPLUS }}" target="_blank">Google+</a> and <a href="mailto:{{ config.SUPPORT_EMAIL }}" target="_blank">e-mail</a>. Of course, I do occasionally sneak in a game of Civilization on <a href="{{ config.AUTHOR.SOCIAL_PROFILE.STEAM }}" target="_blank">Steam</a> as well.</p>
+        </div>
+    </div>
+{% endblock %}

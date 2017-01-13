@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block custom_header %}
+    <style type="text/css">
+        #openid_logout{
+            font-size:0.75em;
+            font-style:italic;
+        }
+        #steam_login{
+            width:100%;
+            text-align:center;
+            display:block;
+            margin:auto;
+        }
+        #steam_login_button{
+            display:block;
+            width:114px;
+            height:43px;
+            margin:auto;
+            background-image:url('{{ url_for('static', filename='images/sits_large_noborder_map.png') }}');
+            background-repeat:no-repeat;
+            background-position:0px 0px;
+        }
+        #steam_login_button:hover{
+            background-position:0px -43px;
+        }
+        .summary {
+            font-size: 0.85em;
+            font-weight: normal !important;
+            letter-spacing: 3px;
+            font-family: ImpactEmb,Impact,Helvetica,Arial,sans-serif;
+            text-transform: uppercase;
+            text-shadow: -1px -1px 0px rgba(0, 0, 0, 0.7);
+        }
+        .updates_date{
+            font-weight:bold;
+            text-decoration:underline;
+        }
+        #content-main form{
+            width:440px;
+            margin:auto;
+        }
+        .search-submit{
+            text-shadow:none;
+            cursor:pointer;
+            color:#e5e4dc;
+            background:#61892b;
+            border:1px solid #61892b;
+            text-shadow:none;
+            background-image:none;
+            box-shadow:none;
+        }
+        .search-submit:hover{
+            background:#84bc3c;
+            border:1px solid #84bc3c;
+        }
+        @media only screen and (max-width:519px){
+            #content-main .steam-profile-url,
+            #content-main form label{
+                display:none;
+            }
+            #content-main form{
+                width:210px;
+            }
+            #content-main form input#basic-url{
+                border-top-left-radius:4px;
+                border-bottom-left-radius:4px;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block before_body_content %}
+{% endblock %}
+
+{% block content %}
+    <div id="content-main" style="margin:5% auto;width:90%;max-width:640px;">
+        <div style="margin:35px auto;text-align:center;">
+            <h1 style="color:#EEEEEE;letter-spacing:2px;font-family:Impact,Arial,sans-serif;text-transform:uppercase;"><i class="fa fa-dashboard" style="font-size:1.25em;"></i>&nbsp;{{ config.APP_NAME }}</h1>
+            <p class="italic">Get the value and size of your Steam account</p>
+        </div>
+        {% if config.MAINTENANCE_ACTIVE_P %}
+            <div class="alert alert-info">{{ config.APP_NAME }} is currently undergoing maintenance. Please check back later.</div>
+        {% else %}
+            <form action="./account" method="get" target="" title="Account Search">
+                <label for="basic-url" style="font-size:11px;">Your Steam profile URL:</label>
+                <div class="input-group">
+                    <span class="input-group-addon steam-profile-url" style="padding:6px;font-size:12px;color:grey;border-width:0;border-right:1px solid #CCCCCC;">http://steamcommunity.com/id/</span>
+                    <input type="text" class="form-control" id="basic-url" style="border-color:#FFFFFF;" name="username" placeholder="username or id">
+                    <span class="input-group-btn">
+                        <button class="btn btn-default search-submit" type="submit"><i class="fa fa-search fa-fw"></i></button>
+                    </span>
+                </div>
+            </form>
+            <div style="width:100%;text-align:center;display:block;margin:10px auto;clear:both;">or</div>
+            {% if session.account_id %}
+                <div id="steam_logged_in" style="width:100%;text-align:center;color:#B0AEAC;display:block;margin:auto;clear:both;">
+                    Lookup Your Account ID: <a href="{{ url_for('account', username=session.account_id) }}">{{ session.account_id }}</a><br />
+                    <a id="openid_logout" href="{{ url_for('logout') }}">(Log out)</a>
+                </div>
+            {% else %}
+                <div id="steam_login">
+                    <a id="steam_login_button" href="{{ url_for('login') }}"></a>
+                </div>
+            {% endif %}
+        {% endif %}
+        <div style="height:1em;width:100%;clear:both;"></div>
+        <p style="font-size:0.75em;padding-top:5px;text-align:center;color:#61892b;font-weight:bold;clear:both;">Note: Your Steam profile must be <a style="text-decoration:underline;color:rgb(132,188,60);" href="https://support.steampowered.com/kb_article.php?ref=4113-YUDH-6401" target="_blank">publicly viewable</a> for this tool to work!</p>
+        <div style="text-align:center;height:20px;clear:both;padding:0.5em 0px;">
+            <iframe allowTransparency="true" frameborder="0" scrolling="no" src="//www.facebook.com/plugins/like.php?href={{ config.DOMAIN_URL }}&send=false&layout=button_count&show_faces=false&action=like&colorscheme=light&font=arial" style="border:none;width:96px;height:20px"></iframe>
+            <div class="g-plusone" data-size="medium" annotation="bubble" data-href="{{ config.DOMAIN_URL }}" style="width:70px;height:20px;"></div>
+            <script type="text/javascript" src="https://apis.google.com/js/plusone.js" async></script>
+            <iframe allowtransparency="true" frameborder="0" scrolling="no" src="https://platform.twitter.com/widgets/tweet_button.html?url={{ config.DOMAIN_URL }}&text={{ config.APP_NAME }} gets the value and size of your Steam account&count=horizontal" style="width:60px;height:20px;"></iframe>
+        </div>
+    </div>
+{% endblock %}
+
+{% block after_body_content %}
+{% endblock %}
+
+{% block custom_footer %}
+{% endblock %}
+
+{% block page_js %}
+    <script type="text/javascript">
+        $(function(){
+            var cookie_openid = function(cookie_name){
+                var nameEQ = cookie_name+'=';
+                var ca = document.cookie.split(';');
+                for(var i=0;i < ca.length;i++){
+                    var c = ca[i];
+                    while (c.charAt(0)==' ') c = c.substring(1,c.length);
+                    if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+                }
+                return null;
+            }
+
+            // Try to parse Steam profile id if a URL is pasted into the search input field.
+            $('.urltext').change(function(){
+                var profile_url = $(this)[0].value;
+                if (profile_url.slice(0,4) === 'http'){
+                    if (profile_url[profile_url.length-1] === '/'){
+                        profile_url = profile_url.slice(0,[profile_url.length-1]);
+                    }
+                    $('.urltext').val(profile_url.substr(profile_url.lastIndexOf('/')+1));
+                }
+            });
+
+            // Add listener for account search form
+            $('.search-submit').click(function(){
+                $('#lightscreen, #lightscreenform').show();
+                $('.account_search form').submit();
+            });
+        });
+    </script>
+{% endblock %}

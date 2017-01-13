@@ -1,0 +1,14 @@
+# Can ignore specific files
+.htaccess
+.DS_Store
+config.py
+
+# Use wildcards as well
+*.pyc
+*.log
+
+# ignore all directories and files in a directory.
+tmp
+tmp/*
+openid_store
+openid_store/*

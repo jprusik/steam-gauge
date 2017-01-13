@@ -1,0 +1,113 @@
+﻿{% extends "base.html" %}
+{% block title %}Friend Summary for {{ api_return.Account.steamid }}{% endblock %}
+{% block custom_header %}
+<style>
+    .friend-persona{
+        font-size:1.5em;
+    }
+    .friend-status i{
+        padding-right:0.5em;
+    }
+    .friend-status .fa-ban{
+        color:#FF6C00;
+    }
+    .friend-status .fa-circle{
+        color:green;
+    }
+    .friend-status .fa-adjust{
+        color:#FFD100;
+    }
+    .friend-status .fa-question-sign{
+        color:gray;
+    }
+    .friend-game-list{
+        margin:0;
+        padding:0 1em;
+        border:0 solid gray;
+        border-left:1px solid #eee;
+        border-radius:5px;
+        line-height:2em;
+        list-style:none;
+    }
+    .friend_entry{
+        padding:1em 0;
+        margin-right:0;
+        margin-left:0;
+        font-size: 0.75em;
+    }
+    .friend_entry:nth-child(odd){
+        background-color:#3d3d3d;
+    }
+    .friend_entry:nth-child(even){
+        background-color:#333333;
+    }
+</style>
+{% endblock %}
+{% block content %}
+    <div class="jumbotron">
+        <img id="useravatar" style="height:70px;width:auto;display:inline-block;padding-right:15px;" src="{{ api_return.Account.avatarfull }}">
+        <h3 id="userhead" style="color:#eeeeee;display:inline-block;vertical-align:bottom;min-height:70px;margin:0;width:100%;max-width:930px;"><a href="http://steamcommunity.com/profiles/{{ api_return.Account.steamid }}" target="_blank">{{ api_return.Account.personaname }}</a> and {{ api_return.Account.Friends|length }} friends have these multiplayer games in common:</h3>
+        <table style="border-collapse:collapse;border-spacing:0;width:100%;margin-top:15px;">
+            <tbody>
+                <tr>
+                    <td style="width:50%;height:2em;">
+                        Most common among friends: <span style="font-style:italic;">{{ api_return.most_common_game }}</span>
+                    </td>
+                    <td style="width:50%;height:2em;">
+                        Least common among friends: <span style="font-style:italic;">{{ api_return.least_common_game }}</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:50%;">
+                        Most played among friends: <span style="font-style:italic;">{{ api_return.most_played_game }}</span>
+                    </td>
+                    <td style="width:50%;">
+                        <strong>Share:</strong> <a style="color:#0094C2;" class="custom-share" href="https://twitter.com/share?url={{ config.DOMAIN_URL }}/friends?username={{ api_return.Account.steamid }}&text=I%20just%20found%20out%20what%20multiplayer%20games%20my%20{{ api_return.Account.Friends|length }}%20friends%20and%20I%20have%20in%20common%20by%20using%20MySteamFriends.com" onclick="javascript:window.open(this.href,'', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=275,width=500');return false;"><i class="fa fa-twitter"></i></a>&nbsp;<a style="color:#d94f30;" class="custom-share" href="https://plus.google.com/share?url={{ config.DOMAIN_URL }}/friends?username={{ api_return.Account.steamid }}" onclick="javascript:window.open(this.href,'', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=275,width=500');return false;"><i class="fa fa-google-plus"></i></a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    {% for f in api_return.Account.Friends %}
+        <div class="row featurette friend_entry">
+            <div class="col-xs-10 col-md-3">
+                <a href="http://steamcommunity.com/profiles/{{ f.steamid }}" target="_blank"><img class="friend_avatar" border="0" src="{{ f.avatarfull }}" rel="avatar of {{ f.personaname }}" /></a>
+                <br>
+                <a class="friend-persona" href="http://steamcommunity.com/profiles/{{ f.steamid }}" target="_blank">{{ f.personaname }}</a>
+                <br>
+                <a class="friend_id" href="http://steamcommunity.com/profiles/{{ f.steamid }}" target="_blank">{{ f.steamid }}</a>
+                <br>
+                <br>
+                <div class="friend-status">
+                    <span style="font-weight:bold;line-height:1.5em;">This user is currently:</span>
+                    <br>
+                    {{ f.personastate|replace('0', '<i class="fa fa-ban"></i>Offline')|replace('1', '<i class="fa fa-circle"></i>Online')|replace('2', '<i class="fa fa-adjust"></i>Busy')|replace('3', '<i class="fa fa-adjust"></i>Away')|replace('4', '<i class="fa fa-adjust"></i>on Snooze')|replace('5', '<i class="fa fa-adjust"></i>looking to trade')|replace('6', '<i class="fa fa-adjust"></i>looking to play')|safe }}
+                </div>
+                {% if f.user_most_played_game %}
+                    <br>
+                    <div class="friend_most_played">
+                        <span style="font-weight:bold;line-height:1.5em;">Most played common game:</span>
+                        <br>
+                        <span style="font-style:italic;">{{ f.user_most_played_game }}</span> ({{ (f.user_most_played_time/60)|round }} hours)
+                    </div>
+                {% endif %}
+                <br>
+                <a class="friend_message" href="steam://friends/message/{{ f.steamid }}"><i style="text-decoration:none;padding-right:0.5em;" class="fa fa-comment"></i>Send a message to this friend</a>
+            </div>
+            <div class="col-xs-10 col-md-9">
+                {% if f.UserApps.Apps|length < 1 %}
+                    <p class="friend-game-list">This user has no multiplayer games in common with {{ api_return.Account.personaname }}</p>
+                {% else %}
+                    <ul class="friend-game-list multi-column">
+                    {% for s in f.UserApps.Apps %}
+                        <li class="friend_gamerow">
+                            {{ s.name }}
+                        </li>
+                    {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+        </div>
+    {% endfor %}
+    {# {{ api_return }} #}
+{% endblock %}
