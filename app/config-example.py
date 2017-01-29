@@ -1,10 +1,13 @@
 BASE_DIRECTORY = '/home/app'
-
 DOMAIN_URL = 'http://www.example.com'
+PRETTY_DOMAIN_URL = 'Example.com'
+
+PYTHON_DIRECTORY = '/usr/bin/python'
+APP_DIRECTORY = '/app'
+APP_NAME = 'App Name'
 
 MYSQL_DATABASE_URI = 'mysql+mysqlconnector://<db user>:<db password>@<db domain>:<port>/<schema>'
-
-FILE_LOCATION = basedir+'/'
+LAST_DB_UPDATE = '<date string>'
 
 API_KEY = '<your api key>'
 
