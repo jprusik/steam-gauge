@@ -1,11 +1,6 @@
 Steam Gauge
 ===========
-steam-gauge
-
-
-Purpose
--------
-[Steam Gauge](https://www.mysteamgauge.com) is a Python-based web app driven by [Flask](http://flask.pocoo.org/). It makes use of Steam's Web API, Big Picture API, and metadata gathered using a (presently closed-source) Python app that scrapes data from the Steam Store pages (when necessary). That metadata is stored in a SQL database for easy retrieval by the Steam Gauge app. The app has undergone several revisions, including a migration from Python 2 to 3 and has subsequently been open-sourced. This repository represents work going forward from that migration (it does not include the full history of the original repo for security reasons), and is presently being refactored to use better coding design patterns.
+[Steam Gauge](https://www.mysteamgauge.com) is a Python-based web app driven by [Flask](http://flask.pocoo.org/) that produces data-rich Steam account summaries. It makes use of Steam's Web API, Big Picture API, and metadata gathered using a (presently closed-source) Python app that scrapes data from the Steam Store pages (when necessary). That metadata is stored in a SQL database for easy retrieval by the Steam Gauge app. The app has undergone several revisions, including a migration from Python 2 to 3 and has subsequently been open-sourced. This repository represents work going forward from that migration (for security reasons, it does not include the full history of the original repo), and is presently being refactored to use better software design patterns.
 
 
 Requirements
