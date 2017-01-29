@@ -4,12 +4,12 @@
 {% block content %}
     <div style="margin:10% auto;max-width:640px;">
         <div style="margin:30px auto;text-align:center;">
-            <h1><a style="color:#EEEEEE;text-decoration:none;line-height: 1.1em;vertical-align:bottom;" href="{{ config.DOMAIN_URL }}"><i class="icon-exclamation-sign"></i>&nbsp;{% if error_code == 'app' %}sorry...{% else %}{{ error_code }}{% endif %}</a></h1>
+            <h1><a style="font-family:Impact,Arial,sans-serif;text-transform:capitalize;color:#EEEEEE;text-decoration:none;line-height: 1.1em;vertical-align:bottom;" href="{{ config.DOMAIN_URL }}"><i class="fa fa-exclamation-circle"></i>&nbsp;{% if error_code == 'app' %}sorry...{% else %}{{ error_code }}{% endif %}</a></h1>
             <p style="font-style:italic;color:#B0AEAC;">{% if error_message %}{{ error_message }}.{% endif %}</p>
             <p style="font-style:italic;color:#B0AEAC;">Want to try a different search?</p>
             <div style="margin:auto;width:230px;font-size:1.5em;font-weight:normal;letter-spacing:3px;font-family:ImpactEmb,Impact,Helvetica,Arial,sans-serif;text-transform:uppercase;text-shadow:-1px -1px 0px rgba(0, 0, 0, 0.7);-webkit-user-select:none;-khtml-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;">
-                <p style="text-align:left;"><a style="text-decoration:none;color:#EEEEEE;vertical-align:bottom;" href="{{ url_for('index') }}"><i style="margin-right:0.5em;" class="icon-dashboard"></i>{{ config.APP_NAME }}</a></p>
-                <p style="text-align:left;"><a style="text-decoration:none;color:#EEEEEE;vertical-align:bottom;" href="{{ url_for('friends') }}"><i style="margin-right:0.5em;" class="icon-group"></i>Steam Friends</a></p>
+                <p style="text-align:left;"><a style="text-decoration:none;color:#EEEEEE;vertical-align:bottom;" href="{{ url_for('index') }}"><i style="margin-right:0.5em;" class="fa fa-dashboard"></i>{{ config.APP_NAME }}</a></p>
+                <p style="text-align:left;"><a style="text-decoration:none;color:#EEEEEE;vertical-align:bottom;" href="{{ url_for('friends') }}"><i style="margin-right:0.5em;" class="fa fa-group"></i>Steam Friends</a></p>
             </div>
         </div>
     </div>
