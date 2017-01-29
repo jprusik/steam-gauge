@@ -6,13 +6,13 @@ Steam Gauge
 Requirements
 ------------
 - Python 3.4.5 or higher (earlier versions of Python 3 have not been tested)
-- Package requirements can be found in `requirements.txt` and installed using pip (note, if you opt to use MySQL, you may have to download and make [`mysql-connector-python`](https://dev.mysql.com/downloads/connector/python/) manually)
+- Package requirements can be found in [`requirements.txt`](app/requirements.txt) and installed using pip (note, if you opt to use MySQL, you may have to download and make [`mysql-connector-python`](https://dev.mysql.com/downloads/connector/python/) manually)
 
 
 Usage
 -----
-- create `config.py` in the app directory and give values to your app constants (see `config-example.py`)
-- if you're running locally, run app.py from the app directory. Otherwise, refer to documentation on setting up and using [Passenger](https://www.phusionpassenger.com/) with your server.
+- create `config.py` in the app directory and give values to your app constants (see [`config-example.py`](app/config-example.py))
+- if you're running locally, run `app.py` from the app directory. Otherwise, refer to documentation on setting up and using [Passenger](https://www.phusionpassenger.com/) with your server.
 - access with your client at `http://127.0.0.1:5000` by default
 
 
