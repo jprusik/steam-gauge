@@ -123,6 +123,7 @@
                         <a href="{{ url_for('index') }}">Home</a> | <a href="{{ url_for('about') }}">About</a> {#| <a href="#">Support {{ config.APP_NAME }} Development</a> #}| <a href="{{ url_for('privacy') }}">Privacy Policy</a>
                     </div>
                     <div class="site-info">
+                        Database last updated at {{ config.LAST_DB_UPDATE }}<br>
                         <a href="http://steampowered.com">Powered by Steam.</a> Valve and Steam are trademarks of Valve Corporation. {{ config.PRETTY_DOMAIN_URL }} is not affiliated with Valve in any way.<br/>2013-2017, {{ config.APP_NAME }} | Developed by <a href="{{ config.AUTHOR.WEBSITE }}" target="_blank">{{ config.AUTHOR.NAME }}</a>. Questions? Notice an issue? Let me know at <a href="mailto:{{ config.SUPPORT_EMAIL }}">{{ config.SUPPORT_EMAIL }}</a>
                     </div>
                 </p>
