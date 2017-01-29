@@ -1070,7 +1070,7 @@
             });
 
             // Initialize sticky header
-            oFH = new FixedHeader(oTable);
+            oFH = new FixedHeader(oTable, {"offsetTop": 50});
 
             // Generic Listener if I can't get ColVis to play nicely with FixedHeader
             // $('.ColVis_Button').click(function(){oFH.fnUpdate();});
