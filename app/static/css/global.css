@@ -63,6 +63,19 @@
     text-align:center;
     clear:both;
 }
+.debug-box{
+    width:80%;
+    max-width:420px;
+    margin:10px auto;
+    color:white;
+    background:none;
+    line-height:1em;
+    font-size:0.7em;
+    border:1px solid #EEEEEE;
+    border-radius:4px;
+    padding:9.5px;
+    font-family:'Menlo','Monaco','Consolas','Courier New',monospace;
+}
 
 /* Sticky footer styles
 -------------------------------------------------- */

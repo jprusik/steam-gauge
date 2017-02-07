@@ -148,12 +148,10 @@
         {% endif %}
 
         {% if session['admin_p'] == True %}
-        <div class="container">
-            <pre style="max-width:640px;margin:10px auto;color:white;background:none;line-height:1em;font-size:0.7em;">
-                You were last at {{ request.referrer }}<br>
-                Your session started at {{ session.session_start }}<br>
-                Your last request was at {{ session.last_action }}
-            </pre>
+        <div class="debug-box">
+            <p>You were last at {{ request.referrer }}</p>
+            <p>Your session started at {{ session.session_start }}</p>
+            <p>Your last request was at {{ session.last_action }}</p>
         </div>
         {% endif %}
         {% block debug %}{% endblock %}
