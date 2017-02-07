@@ -88,7 +88,7 @@
                 <label for="basic-url" style="font-size:11px;">Your Steam profile URL:</label>
                 <div class="input-group">
                     <span class="input-group-addon steam-profile-url" style="padding:6px;font-size:12px;color:grey;border-width:0;border-right:1px solid #CCCCCC;">http://steamcommunity.com/id/</span>
-                    <input type="text" class="form-control" id="basic-url" style="border-color:#FFFFFF;" name="username" placeholder="username or id">
+                    <input type="text" class="form-control url-text" id="basic-url" style="border-color:#FFFFFF;" name="username" placeholder="username or id">
                     <span class="input-group-btn">
                         <button class="btn btn-default search-submit" type="submit"><i class="fa fa-search fa-fw"></i></button>
                     </span>
@@ -138,13 +138,13 @@
             }
 
             // Try to parse Steam profile id if a URL is pasted into the search input field.
-            $('.urltext').change(function(){
+            $('.url-text').change(function(){
                 var profile_url = $(this)[0].value;
                 if (profile_url.slice(0,4) === 'http'){
                     if (profile_url[profile_url.length-1] === '/'){
                         profile_url = profile_url.slice(0,[profile_url.length-1]);
                     }
-                    $('.urltext').val(profile_url.substr(profile_url.lastIndexOf('/')+1));
+                    $('.url-text').val(profile_url.substr(profile_url.lastIndexOf('/')+1));
                 }
             });
 
