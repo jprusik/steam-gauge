@@ -6,10 +6,6 @@ var pricetotal,
     hdunit,
     how_long;
 
-function lightscreen(){
-    document.getElementById('lightscreen').style.display = 'block';
-    document.getElementById('lightscreenform').style.display = 'block';
-}
 function typecheck(select_type){
     if(select_type === 'All'){
         for (i=0; i<document.getElementsByName('includegame').length; i++){

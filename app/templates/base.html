@@ -62,7 +62,7 @@
                         <li><a href="{{ url_for('receipt') }}"><i style="margin-right:0.5em;" class="fa fa-file-o"></i>Receipt</a></li>
                         {% if session.account_id %}
                             <li class="steam-account">
-                                <a style="color:#8bb9e0;" href="{{ url_for('account', username=session.account_id) }}"><i class="fa fa-user fa-fw"></i> Your account</a>
+                                <a style="color:#8bb9e0;" href="{{ url_for('account', username=session.account_id) }}" data-toggle="modal" data-target=".loading-modal"><i class="fa fa-user fa-fw"></i> Your account</a>
                             </li>
                             {# {% if session['admin_p'] == True %}
                                 <li class="admin-menu">
@@ -87,6 +87,22 @@
             </div>
         </nav>
 
+        <!-- Loading Modal -->
+        <div class="modal loading-modal" tabindex="-1" role="dialog" aria-labelledby="loadingModal">
+            <div class="modal-dialog modal-sm" role="document">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <div class="pull-left" style="font-size:30px;margin-right:15px;">
+                            <i class="fa fa-cog fa-spin"></i>
+                        </div>
+                        <div>
+                            {{ config.APP_NAME }} is working, please be patient...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         {% with messages = get_flashed_messages() %}
             {% if messages %}
                 <div class="container">
@@ -96,17 +112,6 @@
                 </div>
             {% endif %}
         {% endwith %}
-
-        <div id="lightscreen">
-            <div id="lightscreenform">
-                <table>
-                    <tr>
-                        <td style="vertical-align:middle;font-size:3em;padding-right:15px;"><i class="fa fa-cog fa-spin"></i></td>
-                        <td style="padding-left:5px;">{{ config.APP_NAME }} is working, please be patient...</td>
-                    </tr>
-                </table>
-            </div>
-        </div>
 
         {% block before_body_content %}{% endblock %}
 
@@ -133,6 +138,7 @@
 
         <script src="{{ url_for('static', filename='js/jquery-3.1.1.min.js') }}"></script>
         <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/global.js') }}"></script>
         {% block page_js %}{% endblock %}
         {# Google Analytics #}
         {% if config.GOOGLE_ANALYTICS %}

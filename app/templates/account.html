@@ -33,9 +33,6 @@
                 .top-summary{
                     width:100% !important;
                 }
-                .lightscreen-bug-form{
-                    left:0px !important;
-                }
 
                 /* Adjust Table for mobile */
                 #app-list_wrapper{
@@ -48,15 +45,6 @@
                 }
             }
 
-            /* Display the lightscreen by default - turn it off when the page js is done loading */
-            #lightscreen{
-                display:block;
-                z-index:998;
-            }
-            #lightscreenform{
-                display:block;
-                z-index:999;
-            }
             .profile-name{
                 margin:0px;
                 font-size:2em;
@@ -133,32 +121,6 @@
                 color:#8bb9e0;
                 font-size:0.75em;
                 cursor:pointer;
-            }
-            .lightscreen-bug-form{
-                color:#3d3d3d;
-                display:none;
-                max-width:280px;
-                padding:15px;
-                -webkit-border-radius:10px;
-                border-radius:10px;
-                border:5px solid #3d3d3d;
-                background:white;
-                position:fixed;
-                left:40%;
-                top:50px;
-                -webkit-box-shadow:0px 0px 5px black;
-                box-shadow:0px 0px 5px black;
-                z-index:999;
-            }
-            .lightscreen-bug-form label{
-                display:block;
-                font-size:0.75em;
-                font-weight:bold;
-                margin-top:0.25em;
-            }
-            .lightscreen-bug-form input,
-            .lightscreen-bug-form textarea{
-                width:100%;
             }
             .submit-button{
                 font-size:0.75em;
@@ -378,7 +340,7 @@
                             {% endif %}
                                 <div class="social-div">Share:<a id="twitter_share" style="color:#0094C2;" class="custom-share" href="" onclick="javascript:window.open(this.href,'', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=275,width=500');return false;"><i class="fa fa-twitter-square"></i></a> <a style="color:#d94f30;" class="custom-share" href="https://plus.google.com/share?url={{ config.DOMAIN_URL }}/account?username={{ api_return.Account.steamid }}" onclick="javascript:window.open(this.href,'', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=275,width=500');return false;"><i class="fa fa-google-plus-square"></i></a> <a style="color:#3b5998;" class="custom-share" href="https://www.facebook.com/sharer/sharer.php?u={{ config.DOMAIN_URL }}/account?username={{ api_return.Account.steamid }}" onclick="javascript:window.open(this.href,'', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=275,width=500');return false;"><i class="fa fa-facebook-square"></i></a></div>
                                 <div class="bug-report">
-                                    <i class="fa fa-bug"></i>&nbsp;<a href="#">Something off? Report bugs here.</a>
+                                    <i class="fa fa-bug"></i>&nbsp;<a href="#" data-toggle="modal" data-target=".bug-modal">Something off? Report bugs here.</a>
                                 </div>
                             </td>
                             <td style="vertical-align:top;padding:10px;">
@@ -565,35 +527,27 @@
 {% endblock %}
 {% block after_body_content %}
 {# Bug Reporting #}
-<div class="lightscreen-bug-form">
-    <p style="margin:0px auto;font-size:0.75em;font-style:italic;">Notice an issue? Is a value wrong? Send the details along here and magic shadow-gnomes will get to work fixing it right away (as their ancient compact demands).</p>
-    <hr>
-    <label>App ID<br>
-        <select id="app_id_bug">
-            <option value="-">-</option>
-        </select>
-    </label><br>
-    <label>Wrong Field<br>
-        <select id="field_bug">
-            <option value="-">-</option>
-        </select>
-    </label><br>
-    <label>Correct Value<br><input type="text" id="value_bug" />
-    </label><br>
-    <label>Notes<br><textarea rows="2" maxlength="2000" id="notes_bug" style="max-width:100%;max-height:150px;"></textarea></label><br>
-    <label>Contact info (if you want a response)<br><input type="text" id="contact_bug" /></label><br>
-    <input type="text" id="account_bug" class="hidden" value="{{ api_return.Account.steamid }}"/><br>
-    <div class="submit-button">Submit</div>
+<!-- Loading Modal -->
+<div class="modal bug-modal" tabindex="-1" role="dialog" aria-labelledby="bugModal">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <p style="margin:0px auto;font-size:0.75em;font-style:italic;">Notice an issue? Is a value wrong? Send the details along at the appropriate link below and magic shadow-gnomes will get to work fixing it right away (as their ancient compact demands).</p>
+                <hr>
+                <p>
+                    <strong>Database issues (wrong values, missing information, etc):</strong>
+                    <br>
+                    <a href="{{ config.ISSUE_TRACKER_DB }}" target="_blank">Steam Gauge DB Issue Tracker</a>
+                </p>
+                <p>
+                    <strong>General issues:</strong>
+                    <br>
+                    <a href="{{ config.ISSUE_TRACKER }}" target="_blank">Steam Gauge App Issue Tracker</a>
+                </p>
+            </div>
+        </div>
+    </div>
 </div>
-<iframe name="bug_track" src="https://docs.google.com/spreadsheet/embeddedform?formkey=dGp4LUxwOXZKVXdYakhGRHdmN3Q3Ync6MQ" style="display:none;"></iframe>
-<form id="bug_form" action="https://docs.google.com/spreadsheet/formResponse?formkey=dGp4LUxwOXZKVXdYakhGRHdmN3Q3Ync6MQ" style="display:none;" method="POST" target="bug_track">
-    <input type="text" name="entry.0.single" value="" class="ss-q-short bug_appid" id="entry_0">
-    <input type="text" name="entry.1.single" value="" class="ss-q-short bug_field" id="entry_1">
-    <input type="text" name="entry.2.single" value="" class="ss-q-short bug_corr_val" id="entry_2">
-    <input type="text" name="entry.3.single" value="" class="ss-q-short bug_add_notes" id="entry_3">
-    <input type="text" name="entry.4.single" value="" class="ss-q-short bug_contact" id="entry_4">
-    <input type="text" name="entry.5.single" value="{{ api_return.Account.steamid }}" class="ss-q-short bug_account" id="entry_5">
-</form>
 {% endblock %}
 {% block custom_footer %}
 {% endblock %}
@@ -608,6 +562,8 @@
     <!-- jquery.dataTables.min.js by SpryMedia "http://www.datatables.net/" -->
     <script type="text/javascript">
     $(document).ready(function(){
+        $('.loading-modal').modal({'backdrop':'static'});
+
         function tableTotals(data_set){
             var totals = {
                 'app_count':0,
@@ -867,13 +823,6 @@
             // Add search box to tableheader
             $("div.account_search").html('<form action="./account" method="get" target="" title="Account Search" style="width:215px;margin:auto;height:27px;"><input id="urltext" style="margin-right:0px;height:27px;padding:0px 5px;background-color:#eeeeee;outline:none;display:inline-block;border-width:0px;" type="text" name="username" size="20" autocomplete="off"><input type="submit" style="margin-left:0px;-webkit-border-top-right-radius:3px;-webkit-border-bottom-right-radius:3px;-moz-border-radius-topright:3px;-moz-border-radius-bottomright:3px;border-top-right-radius:3px;border-bottom-right-radius:3px;height:27px;cursor:pointer;color:#e5e4dc;padding:0px 10px;background-color:#61892b;border-width:0px;border-left:1px solid #666;font-family:FontAwesome;display:inline-block;" value="" title="Account Search"></form>');
 
-            // Add listener for account search form
-            $('.account_search form').submit(function( event ) {
-                $('#lightscreen, #lightscreenform').show();
-            });
-
-            // When everything is done processing, hide the lightscreen
-            $('#lightscreen, #lightscreenform').hide();
         {% else %}
             var table_data,
                 selected_data,
@@ -1107,54 +1056,9 @@
             // Update the Fixed Header because sometimes it doesn't position properly on initialization
             oFH.fnUpdate();
 
-            // Set up bug report form
-            var app_id_sort=[];
-            $(oTable.fnGetData()).each(function(){
-                app_id_sort.push(Number(this[1]));
-            });
-            app_id_sort.sort(sortNumber);
-            $(app_id_sort).each(function(){
-                $('#app_id_bug').append('<option value="'+this+'">'+this+'</option>');
-            });
-            $(oTable.fnSettings().aoColumns).each(function(){
-                $('#field_bug').append('<option value="'+$(this.nTh).find('span').text()+'">'+$(this.nTh).find('span').text()+'</option>');
-            });
-            $('.lightscreen-bug-form option, .lightscreen-bug-form input, .lightscreen-bug-form textarea').change(function(){
-                $('#bug_form .bug_appid').val($('#app_id_bug').val());
-                $('#bug_form .bug_field').val($('#field_bug').val());
-                $('#bug_form .bug_corr_val').val($('#value_bug').val());
-                $('#bug_form .bug_add_notes').val($('#notes_bug').val());
-                $('#bug_form .bug_contact').val($('#contact_bug').val());
-                $('#bug_form .bug_account').val($('#account_bug').val());
-            });
-            $('.bug-report *').click(function(){
-                $('#app_id_bug, #field_bug, #value_bug, #notes_bug, #contact_bug, #account_bug').val('');
-                $('#bug_form .bug_appid, #bug_form .bug_field, #bug_form .bug_corr_val, #bug_form .bug_add_notes, #bug_form .bug_contact, #bug_form .bug_account').val('');
-                $('#lightscreen, .lightscreen-bug-form').show();
-            });
-            $('.lightscreen-bug-form .submit-button').click(function(){
-                if (($('#value_bug').val()) || ($('#notes_bug').val())){
-                    $('#bug_form').submit();
-                    $('#lightscreen, .lightscreen-bug-form').hide();
-                    alert('Thanks for passing along the issue!');
-                }
-                else{
-                    alert('You need to enter a new value or notes to submit an error.');
-                }
-            });
+            // When everything is done processing, hide the modal
+            $('.loading-modal').modal('hide');
 
-            // Make lightscreen and popups go away on lightscreen click and esc key
-            $('#lightscreen').click(function(){
-                $('#lightscreen, #lightscreenform, .lightscreen-bug-form').hide();
-            });
-            $(document).keyup(function(e) {
-                if (e.keyCode == 27) {
-                    $('#lightscreen, #lightscreenform, .lightscreen-bug-form').hide();
-                }
-            });
-
-            // When everything is done processing, hide the lightscreen
-            $('#lightscreen, #lightscreenform').hide();
         {% endif %}
     });
     </script>

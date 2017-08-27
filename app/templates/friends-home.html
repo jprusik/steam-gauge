@@ -90,14 +90,14 @@
                     <span class="input-group-addon steam-profile-url" style="padding:6px;font-size:12px;color:grey;border-width:0;border-right:1px solid #CCCCCC;">http://steamcommunity.com/id/</span>
                     <input type="text" class="form-control url-text" id="basic-url" style="border-color:#FFFFFF;" name="username" placeholder="username or id">
                     <span class="input-group-btn">
-                        <button class="btn btn-default search-submit" type="submit"><i class="fa fa-search fa-fw"></i></button>
+                        <button class="btn btn-default search-submit" type="submit" data-toggle="modal" data-target=".loading-modal"><i class="fa fa-search fa-fw"></i></button>
                     </span>
                 </div>
             </form>
             <div style="width:100%;text-align:center;display:block;margin:10px auto;clear:both;">or</div>
             {% if session.account_id %}
                 <div id="steam_logged_in" style="width:100%;text-align:center;color:#B0AEAC;display:block;margin:auto;clear:both;">
-                    Lookup Your Account ID: <a href="{{ url_for('account', username=session.account_id) }}">{{ session.account_id }}</a><br />
+                    Lookup Your Account ID: <a href="{{ url_for('account', username=session.account_id) }}" data-toggle="modal" data-target=".loading-modal">{{ session.account_id }}</a><br />
                     <a id="openid_logout" href="{{ url_for('logout') }}">(Log out)</a>
                 </div>
             {% else %}
@@ -146,12 +146,6 @@
                     }
                     $('.url-text').val(profile_url.substr(profile_url.lastIndexOf('/')+1));
                 }
-            });
-
-            // Add listener for account search form
-            $('.search-submit').click(function(){
-                $('#lightscreen, #lightscreenform').show();
-                $('.account_search form').submit();
             });
         });
     </script>
