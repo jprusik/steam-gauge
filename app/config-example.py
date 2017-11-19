@@ -17,6 +17,8 @@ ADMIN_USERS = []
 
 GOOGLE_ANALYTICS = '<your GA id>'
 
+BITCOIN_ADDRESS = '<your bitcoin address>'
+
 DEBUG_ACTIVE_P = False
 
 SUPPORT_EMAIL = '<your email>'
