@@ -54,6 +54,21 @@ class App(Base):
     def __repr__(self):
         return '<App %s - "%s" (%s%s) | Type: %s | Multi: %s | Price: $%s | Windows: %s | Mac: %s | Linux: %s | Joy: %s | Metacritic: %s | %s | %s | %s>' % (self.app_id, self.app_title, self.size_mb, ' MB', self.app_type, self.multiplayer, self.store_price_default_usd, self.os_windows, self.os_mac, self.os_linux, self.controller_support, self.metascore, self.icon, self.small_logo, self.big_logo)
 
+
+class Time_To_Beat(Base):
+    __tablename__ = 'TIME_TO_BEAT'
+
+    app_id = Column(Unicode(20), index=True, primary_key=True)
+    data_imputed_completionist = Column(Boolean)
+    data_imputed_extras = Column(Boolean)
+    data_imputed_main_game = Column(Boolean)
+    hltb_id = Column(Unicode(20))
+    hours_to_beat_completionist = Column(Float)
+    hours_to_beat_extras = Column(Float)
+    hours_to_beat_main_game = Column(Float)
+    timetobeat_api_raw = Column(Text)
+
+
 class Genre(Base):
     __tablename__ = 'GENRES'
 
