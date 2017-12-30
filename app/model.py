@@ -63,9 +63,9 @@ class Time_To_Beat(Base):
     data_imputed_extras = Column(Boolean)
     data_imputed_main_game = Column(Boolean)
     hltb_id = Column(Unicode(20))
-    hours_to_beat_completionist = Column(Float)
-    hours_to_beat_extras = Column(Float)
-    hours_to_beat_main_game = Column(Float)
+    minutes_to_beat_completionist = Column(Float)
+    minutes_to_beat_extras = Column(Float)
+    minutes_to_beat_main_game = Column(Float)
     timetobeat_api_raw = Column(Text)
 
 
