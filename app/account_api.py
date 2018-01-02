@@ -184,6 +184,7 @@ def account_lookup(steam_user, api_format='py', request_type='account'):
                 app_data['developers'] = get_app_developers(x['appid'])
                 app_data['publishers'] = get_app_publishers(x['appid'])
                 app_data['languages'] = get_app_languages(x['appid'])
+                app_data['time_to_beat'] = get_app_time_to_beat(x['appid'])
 
                 if app_data['size_mb'] and app_data['size_mb'] > 0:
                     app_data['size_gb'] = math.ceil((float(app_data['size_mb'])/1000) * 10.0) / 10.0
@@ -316,6 +317,38 @@ def get_app_languages(pid):
     for l in model.session.query(model.Language_App_Map).filter_by(apps=pid).all():
         languages.append(l.languages)
     return languages
+
+
+def get_app_time_to_beat(pid):
+    pid = str(pid)
+    query = model.session.query(model.Time_To_Beat).filter_by(app_id=pid).first()
+
+    if query:
+        app_data = query.__dict__
+
+        # TODO: Let the client handle this on frontend refactor
+        time_to_beat_values = [app_data['minutes_to_beat_extras'], app_data['minutes_to_beat_main_game'], app_data['minutes_to_beat_completionist']]
+        minutes_range = []
+
+        # only include useful values
+        for value in time_to_beat_values:
+            if isinstance(value, (int,float)) and value > 0:
+                minutes_range.append(value)
+
+        app_data['minutes_range'] = minutes_range
+
+        # return null if there are no useful values in the time to beat record
+        if len(minutes_range) == 0:
+            return None
+
+        # There's probably a better way to do this, but we don't need these keys
+        del app_data['_sa_instance_state']
+        del app_data['timetobeat_api_raw']
+        del app_data['app_id']
+
+        return app_data
+    else:
+        return None
 
 
 def most_common(lst):

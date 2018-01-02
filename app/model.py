@@ -63,9 +63,9 @@ class Time_To_Beat(Base):
     data_imputed_extras = Column(Boolean)
     data_imputed_main_game = Column(Boolean)
     hltb_id = Column(Unicode(20))
-    minutes_to_beat_completionist = Column(Float)
-    minutes_to_beat_extras = Column(Float)
-    minutes_to_beat_main_game = Column(Float)
+    minutes_to_beat_completionist = Column(Integer)
+    minutes_to_beat_extras = Column(Integer)
+    minutes_to_beat_main_game = Column(Integer)
     timetobeat_api_raw = Column(Text)
 
 
@@ -161,7 +161,7 @@ class Users(Base):
     attributes = Column(PickleType)
     last_update = Column(DateTime)
 
-def littleBobbyTables():
+def littleBobby():
     Base.metadata.drop_all(engine)
 
 def createAll():
