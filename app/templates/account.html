@@ -242,19 +242,19 @@
 
             /*Add sort icons*/
             .sorting_asc{
-                background:#3f3f3f url('{{ url_for('static', filename='images/sort_asc.png') }}') no-repeat center right !important;
+                background:#3f3f3f url("{{ url_for('static', filename='images/sort_asc.png') }}") no-repeat center right !important;
                 border-bottom:1px solid #3f3f3f !important;
                 border-right:1px solid #3f3f3f !important;
                 padding-right:20px;
             }
             .sorting_desc{
-                background:#3f3f3f url('{{ url_for('static', filename='images/sort_desc.png') }}') no-repeat center right !important;
+                background:#3f3f3f url("{{ url_for('static', filename='images/sort_desc.png') }}") no-repeat center right !important;
                 border-bottom:1px solid #3f3f3f !important;
                 border-right:1px solid #3f3f3f !important;
                 padding-right:20px;
             }
             .sorting{
-                background:#74706f url('{{ url_for('static', filename='images/sort_both.png') }}') no-repeat center right !important;
+                background:#74706f url("{{ url_for('static', filename='images/sort_both.png') }}") no-repeat center right !important;
                 padding-right:20px;
             }
 
@@ -382,8 +382,9 @@
                         <th title="App Id" id="id_header" class="id_col"><i class="fa fa-list-ol"></i><span class="header_text">ID</span></th>
                         <th title="App Icon" id="icon_header" class="icon_col"><i class="fa fa-photo"></i><span class="header_text">Icon</span></th>
                         <th title="App Title" id="title_header" class="title_col"><i class="fa fa-list"></i><span class="header_text">Title</span></th>
-                        <th title="Minutes Running App on Steam" id="minutes_played_header" class="minutes_played_col"><i class="fa fa-time"></i><sup>min</sup><span class="header_text">Minutes Played</span></th>
-                        <th title="Hours Running App on Steam" id="hours_played_header" class="hours_played_col"><i class="fa fa-time"></i><sup>hrs</sup><span class="header_text">Hours Played</span></th>
+                        <th title="Minutes Running App on Steam" id="minutes_played_header" class="minutes_played_col"><i class="fa fa-clock-o"></i><sup> min</sup><span class="header_text">Minutes Played</span></th>
+                        <th title="Hours Running App on Steam" id="hours_played_header" class="hours_played_col"><i class="fa fa-clock-o"></i><sup> hrs</sup><span class="header_text">Hours Played</span></th>
+                        <th title="Time to Beat" id="time_to_beat_header" class="time_to_beat_col"><i class="fa fa-clock-o"></i><span class="header_text">Time to Beat</span></th>
                         <th title="Default App Price in USD" id="store_price_default_usd_header" class="store_price_default_usd_col"><i class="fa fa-usd"></i><span class="header_text">Default Price (USD)</span></th>
                         <th title="Price/Hours Played Ratio" id="price_hours_header" class="price_hours_col"><i class="fa fa-usd"></i><span class="header_text">Price / Hours Played</span></th>
                         <th title="App Release Date" id="release_date_header" class="release_date_col"><i class="fa fa-calendar"></i><span class="header_text">Release Date</span></th>
@@ -393,8 +394,8 @@
                         <th title="App Windows Compatibility" id="os_windows_header" class="os_windows_col"><i class="fa fa-windows"></i><span class="header_text">Windows</span></th>
                         <th title="App Mac Compatibility" id="os_mac_header" class="os_mac_col"><i class="fa fa-apple"></i><span class="header_text">Mac</span></th>
                         <th title="App Linux Compatibility" id="os_linux_header" class="os_linux_col"><i class="fa fa-linux"></i><span class="header_text">Linux</span></th>
-                        <th title="App Install Size (Megabytes)" id="size_mb_header" class="size_mb_col"><i class="fa fa-hdd"></i><sup>MB</sup><span class="header_text">Install Size (MB)</span></th>
-                        <th title="App Install Size (Gigabytes)" id="size_gb_header" class="size_gb_col"><i class="fa fa-hdd"></i><sup>GB</sup><span class="header_text">Install Size (GB)</span></th>
+                        <th title="App Install Size (Megabytes)" id="size_mb_header" class="size_mb_col"><i class="fa fa-hdd-o"></i><sup> MB</sup><span class="header_text">Install Size (MB)</span></th>
+                        <th title="App Install Size (Gigabytes)" id="size_gb_header" class="size_gb_col"><i class="fa fa-hdd-o"></i><sup> GB</sup><span class="header_text">Install Size (GB)</span></th>
                         <th title="App Controller Support" id="controller_support_header" class="controller_support_col"><i class="fa fa-gamepad"></i><span class="header_text">Controller Support</span></th>
                         <th title="App Multiplayer Support" id="multiplayer_header" class="multiplayer_col"><i class="fa fa-group"></i><span class="header_text">Multiplayer</span></th>
                         <!-- <th title="App Languages" id="languages_header" class="languages_col"><i class="fa fa-globe"></i><span class="header_text">Languages</span></th> -->
@@ -412,6 +413,22 @@
                             <td id="{{ x.app_id }}_title" class="title_col"><a href="http://store.steampowered.com/app/{{ x.app_id }}/" target="_blank">{{ x.app_title }}</a></td>
                             <td id="{{ x.app_id }}_minutes_played" class="minutes_played_col">{{ x.minutes_played }}</td>
                             <td id="{{ x.app_id }}_hours_played" class="hours_played_col">{{ x.hours_played }}</td>
+                            <td id="{{ x.app_id }}_time_to_beat" class="time_to_beat_col" data-order="{{ (x.time_to_beat.minutes_range|sort)[0] }}">
+                                {% if x.time_to_beat and x.time_to_beat.hltb_id %}
+                                    <a href="https://howlongtobeat.com/game.php?id={{ x.time_to_beat.hltb_id }}" target="_blank" title="{{ 'data estimated by howlongtobeatsteam.com' if True in [x.time_to_beat.data_imputed_completionist, x.time_to_beat.data_imputed_main_game, x.time_to_beat.data_imputed_extras] }}" rel="nofollow">
+                                        {% set ttb_range = x.time_to_beat.minutes_range|sort %}
+                                        {% set min_hours, min_minutes, max_hours, max_minutes = (ttb_range[0]/60)|round(0, 'floor')|int, (ttb_range[0]%60), (ttb_range[-1]/60)|round(0, 'floor')|int, (ttb_range[-1]%60) %}
+
+                                        {% if ttb_range[0] == ttb_range[-1] %}
+                                            {{ ['%sh'|format(min_hours) if min_hours > 0, '%sm'|format(min_minutes) if min_minutes > 0]|join(' ') }}
+                                        {% else %}
+                                            min: {{ ['%sh'|format(min_hours) if min_hours > 0, '%sm'|format(min_minutes) if min_minutes > 0]|join(' ') }}<br>max: {{ ['%sh'|format(max_hours) if max_hours > 0, '%sm'|format(max_minutes) if max_minutes > 0]|join(' ') }}
+                                        {% endif %}
+                                    </a>
+                                {% else %}
+                                    <span title="this app has no data available, is not a game, or is an open-ended game">N/A</span>
+                                {% endif %}
+                            </td>
                             <td id="{{ x.app_id }}_store_price_default_usd" class="store_price_default_usd_col">{{ x.store_price_default_usd }}</td>
                             <td id="{{ x.app_id }}_price_hours" class="price_hours_col">{{ x.price_hours }}</td>
                             <td id="{{ x.app_id }}_release_date" class="release_date_col">{{ x.release_date }}</td>
@@ -476,6 +493,7 @@
                             <td id="{{ x.app_id }}_title" class="title_col"><a href="http://store.steampowered.com/app/{{ x.app_id }}/" target="_blank">Unknown</a></td>
                             <td id="{{ x.app_id }}_minutes_played" class="minutes_played_col">{{ x.minutes_played }}</td>
                             <td id="{{ x.app_id }}_hours_played" class="hours_played_col">{{ x.hours_played }}</td>
+                            <td id="{{ x.app_id }}_time_to_beat" class="time_to_beat_col" data-order=""></td>
                             <td id="{{ x.app_id }}_store_price_default_usd" class="store_price_default_usd_col"></td>
                             <td id="{{ x.app_id }}_price_hours" class="price_hours_col"></td>
                             <td id="{{ x.app_id }}_release_date" class="release_date_col"></td>
@@ -504,6 +522,7 @@
                         <td id="title_footer" class="title_col title_sum"></td>
                         <td id="minutes_played_footer" class="minutes_played_col minutes_played_sum"></td>
                         <td id="hours_played_footer" class="hours_played_col hours_played_sum"></td>
+                        <td id="time_to_beat_footer" class="time_to_beat_col time_to_beat_sum"></td>
                         <td id="store_price_default_usd_footer" class="store_price_default_usd_col store_price_default_usd_sum"></td>
                         <td id="price_hours_footer" class="price_hours_col price_hours_sum"></td>
                         <td id="release_date_footer" class="release_date_col"></td>
@@ -571,6 +590,8 @@
                 'minutes_average':0,
                 'hours_total':0,
                 'hours_average':0,
+                'time_to_beat_total':0,
+                'time_to_beat_average':0,
                 'price_total':0,
                 'price_average':0,
                 'price_hours_total':0,
@@ -594,32 +615,35 @@
                 if ($.isNumeric(v[5])){
                     totals.hours_total += parseFloat(v[5]);
                 }
-                if ($.isNumeric(v[6])){
-                    totals.price_total += parseFloat(v[6]);
+                if ($.isNumeric(v[6].value)){
+                    totals.time_to_beat_total += parseInt(v[6].value);
                 }
-                if ($.isNumeric(v[11].split(/<\/|\">/)[1])){
+                if ($.isNumeric(v[7])){
+                    totals.price_total += parseFloat(v[7]);
+                }
+                if ($.isNumeric(v[12].split(/<\/|\">/)[1])){
                     totals.metascore_count += 1;
-                    totals.average_metascore += parseInt(v[11].split(/<\/|\">/)[1]);
-                }
-                if (v[12].split(/<\/span|none;\">/)[1] === '1'){
-                    totals.windows_total += 1;
+                    totals.average_metascore += parseInt(v[12].split(/<\/|\">/)[1]);
                 }
                 if (v[13].split(/<\/span|none;\">/)[1] === '1'){
-                    totals.mac_total += 1;
+                    totals.windows_total += 1;
                 }
                 if (v[14].split(/<\/span|none;\">/)[1] === '1'){
+                    totals.mac_total += 1;
+                }
+                if (v[15].split(/<\/span|none;\">/)[1] === '1'){
                     totals.linux_total += 1;
                 }
-                if ($.isNumeric(v[15])){
-                    totals.mb_install_total += parseInt(v[15]);
-                }
                 if ($.isNumeric(v[16])){
-                    totals.gb_install_total += parseFloat(v[16]);
+                    totals.mb_install_total += parseInt(v[16]);
                 }
-                if ((v[17] === 'full') || (v[17] === 'partial')){
+                if ($.isNumeric(v[17])){
+                    totals.gb_install_total += parseFloat(v[17]);
+                }
+                if ((v[18] === 'full') || (v[18] === 'partial')){
                     totals.controller_total += 1;
                 }
-                if (v[18].split(/<\/span|none;\">/)[1] === '1'){
+                if (v[19].split(/<\/span|none;\">/)[1] === '1'){
                     totals.multiplayer_total += 1;
                 }
             });
@@ -643,6 +667,10 @@
             if (!$.isNumeric(totals.hours_average)){
                 totals.hours_average = 0;
             }
+            totals.time_to_beat_average = Math.round((totals.time_to_beat_total/totals.app_count)*10)/10;
+            if (!$.isNumeric(totals.time_to_beat_average)){
+                totals.time_to_beat_average = 0;
+            }
             totals.gb_install_total = Math.round(totals.gb_install_total*10)/10;
             totals.gb_install_average = Math.round((totals.gb_install_total/totals.app_count)*10)/10;
             if (!$.isNumeric(totals.gb_install_average)){
@@ -663,6 +691,7 @@
             $('.title_sum').html(totals_json.app_count +' selected');
             $('.minutes_played_sum').html('<div style="white-space:nowrap;">'+totals_json.minutes_total+' min (total)</div><div style="margin-top:0.75em;white-space:nowrap;">'+totals_json.minutes_average+' min (avg)</div>');
             $('.hours_played_sum').html('<div style="white-space:nowrap;">'+totals_json.hours_total+' hrs (total)</div><div style="margin-top:0.75em;white-space:nowrap;">'+totals_json.hours_average+' hrs (avg)</div>');
+            $('.time_to_beat_sum').html('<div style="white-space:nowrap;">'+minutesToLanguageFormat(totals_json.time_to_beat_total)+' (total)</div><div style="margin-top:0.75em;white-space:nowrap;">'+minutesToLanguageFormat(totals_json.time_to_beat_average)+' (avg)</div>');
             $('.store_price_default_usd_sum').html('<div style="white-space:nowrap;">$'+totals_json.price_total+' (total)</div><div style="margin-top:0.75em;white-space:nowrap;">$'+totals_json.price_average+' (avg)</div>');
             $('.price_hours_sum').html(totals_json.price_hours_total+' $/hrs');
             // $('#release_date_footer').html(totals_json.);
@@ -708,6 +737,19 @@
                 return interval + " minutes";
             }
             return Math.floor(seconds) + " seconds";
+        }
+
+        function minutesToLanguageFormat(value) {
+          var minutes = parseInt(value);
+
+          if (minutes === 0) {
+            return 0;
+          }
+
+          var hours = Math.floor(minutes/60) > 0 ? Math.floor(minutes/60)+'h' : null;
+          var minutes = minutes%60 > 0 ? minutes%60+'m' : null;
+
+          return [hours, minutes].join(' ').trim();
         }
 
         function selectionPreset(preset){
@@ -848,7 +890,7 @@
             // Initialize Table
             oTable = $('#app-list').dataTable({
                 "aaSorting": [[ 5, "desc" ]],
-                "bLengthChange":false, // toggles record number option dropdown when pagination occurs
+                "bLengthChange": false, // toggles record number option dropdown when pagination occurs
                 "iDisplayLength": 100, // number of records to display at a time when pageination is enabled
                 "bPaginate": paginate_p, // toggle pagination for long lists
                 "sPaginationType": "full_numbers", // Which pagination style to use
@@ -859,9 +901,27 @@
                 "bAutoWidth": false, // toggle automatic column width calculation. This can be disabled as an optimisation
                 "sDom": 'RCTlfrtip',
                 "aoColumnDefs": [
-                    { "bVisible": false, "aTargets": [ 4, 16 ] },
-                    { "sType": "numeric", "aTargets": [ 1,4,5,6,7,15,16 ] },
-                    { "sType": "date", "aTargets": [ 8 ] }
+                    { "bVisible": false, "aTargets": [ 4, 17 ] },
+                    { "sType": "numeric", "aTargets": [ 1,4,5,6,7,8,16,17 ] },
+                    { "sType": "date", "aTargets": [ 9 ] },
+                    {
+                      "mData": function ( source, type, val ) {
+                        if (type === 'set') {
+                          var selector = '#'+source[1]+'_time_to_beat';
+                          var display = source[6];
+
+                          source[6] = {
+                            "display": $(selector).html(),
+                            "value": $(selector).attr('data-order') || ''
+                          }
+                          return source[6].value;
+                        }
+                        else if (type === 'display') {
+                          return source[6].display;
+                        }
+                        return source[6].value;
+                      }, "aTargets": [ 6 ]
+                    }
                 ],
                 "oLanguage": {
                     "sSearch": '<i class="fa fa-filter" aria-hidden="true"></i> Filter'
@@ -972,14 +1032,14 @@
                                 {
                                     "sExtends": "csv",
                                     "sButtonText": "csv",
-                                    "mColumns": [ 0,1,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19 ],
+                                    "mColumns": [ 0,1,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20 ],
                                     "bFooter": false,
                                     "sFileName": "{{ api_return.Account.steamid }} - Steam Account Summary.csv"
                                 },
                                 {
                                     "sExtends": "xls",
                                     "sButtonText": "Excel",
-                                    "mColumns": [ 0,1,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19 ],
+                                    "mColumns": [ 0,1,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20 ],
                                     "bFooter": false,
                                     "sFileName": "{{ api_return.Account.steamid }} - Steam Account Summary.xls"
                                 },
@@ -992,7 +1052,7 @@
                                     "sExtends": "csv",
                                     "sButtonText": "csv (selection only)",
                                     "bSelectedOnly": true,
-                                    "mColumns": [ 0,1,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19 ],
+                                    "mColumns": [ 0,1,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20 ],
                                     "bFooter": false,
                                     "sFileName": "{{ api_return.Account.steamid }} - Steam Account Selection.csv"
                                 },
@@ -1000,7 +1060,7 @@
                                     "sExtends": "xls",
                                     "sButtonText": "Excel (selection only)",
                                     "bSelectedOnly": true,
-                                    "mColumns": [ 0,1,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19 ],
+                                    "mColumns": [ 0,1,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20 ],
                                     "bFooter": false,
                                     "sFileName": "{{ api_return.Account.steamid }} - Steam Account Selection.xls"
                                 },
@@ -1048,7 +1108,7 @@
             // });
 
             // Any prices listed as 'None' will be treated as '0'
-            $.each($('#app-list').dataTable().fnGetData(),function(i,v){if (v[6] === 'None'){v[6]='0';}});
+            $.each($('#app-list').dataTable().fnGetData(),function(i,v){if (v[7] === 'None'){v[7]='0';}});
 
             // Update the Twitter share with the account info
             $('#twitter_share').attr('href', 'https://twitter.com/share?url={{ config.DOMAIN_URL }}/account?username={{ api_return.Account.steamid }}&text=My%20%23Steam%20account%20has%20'+table_data.app_count+'%20items%20valued%20at%20%24'+table_data.price_total+'%20and%20requires%20'+table_data.gb_install_total+'%20GB%20of%20disk%20space%3A');

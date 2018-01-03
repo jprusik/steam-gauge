@@ -202,9 +202,9 @@ body {
     background-color:#444444;
 }
 
-@media (min-width:1230px){
+@media (min-width:1420px){
     .container{
-        width:1230px;
+        width:1420px;
     }
 }
 @media (max-width:767px){
