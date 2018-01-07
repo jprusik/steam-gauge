@@ -11,6 +11,18 @@ app.config.from_object('config')
 # explicitly disable debug in production
 app.debug = config.DEBUG_ACTIVE_P
 
+# Turn on logger
+if app.debug:
+    import logging
+    logging.basicConfig(
+        filename=config.DEBUG_LOG_FILE,
+        level=logging.DEBUG,
+        format='[%(asctime)s.%(msecs)03d] %(levelname)s {%(pathname)s:%(lineno)d}\n%(message)s',
+        datefmt='%H:%M:%S'
+    )
+    db_logger = logging.getLogger('sqlalchemy.engine')
+    db_logger.setLevel(logging.DEBUG)
+
 app.secret_key = config.APP_SECRET
 
 import account_api
@@ -72,7 +84,10 @@ def friends():
         # TODO: fix this redirection logic. Attempts to pass null value for username should go to the error page. Move this search to main homepage.
         return render_template('friends-home.html')
     else:
+        start_time = datetime.datetime.now()
         api_accounts = account_api.account_lookup(searchword, request_type='friends')
+        if app.debug:
+            logging.info('Time to run friends lookup: '+str(datetime.datetime.now() - start_time))
         if api_accounts['QueryStatus']['error'] == True:
             return render_template('error.html', error_code='app', error_message=api_accounts['QueryStatus']['error_message'])
         return render_template('friends.html', api_return=api_accounts)
@@ -84,7 +99,10 @@ def account():
     if searchword == '':
         return render_template('error.html', error_code='app', error_message='No username was provided')
     else:
+        start_time = datetime.datetime.now()
         api_accounts = account_api.account_lookup(searchword)
+        if app.debug:
+            logging.info('Time to run account lookup: '+str(datetime.datetime.now() - start_time))
         if api_accounts['QueryStatus']['error'] == True:
             return render_template('error.html', error_code='app', error_message=api_accounts['QueryStatus']['error_message'])
         return render_template('account.html', api_return=api_accounts)

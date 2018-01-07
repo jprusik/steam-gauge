@@ -7,8 +7,12 @@ import math
 import config
 import model
 
+if config.DEBUG_ACTIVE_P:
+    import logging
 
 def api_request(request_url):
+    if config.DEBUG_ACTIVE_P:
+        logging.debug('request url: '+request_url)
     return json.load(urllib2.build_opener().open(urllib2.Request(request_url)))
 
 
@@ -18,8 +22,14 @@ def resolve_steam_vanity(username):
     format_query = '&format=json'
     vanity_query = '&vanityurl='
 
+    timer_start = datetime.now()
+
     json_get_steam_id = api_request('%(vanity_resolve_api)s%(key_query)s%(format_query)s%(vanity_query)s%(username)s' % locals())
+
     if json_get_steam_id['response']['success'] == 1:
+        if config.DEBUG_ACTIVE_P:
+            logging.info('Time to successful resolve_steam_vanity request: '+str(datetime.now() - timer_start))
+
         return json_get_steam_id['response']['steamid']
     else:
         return None
@@ -31,7 +41,13 @@ def get_user_metadata(user_id):
     format_query = '&format=json'
     steam_id_query = '&steamids='
 
+    timer_start = datetime.now()
+
     user_metadata = api_request('%(user_metadata_api)s%(key_query)s%(format_query)s%(steam_id_query)s%(user_id)s' % locals())
+
+    if config.DEBUG_ACTIVE_P:
+        logging.info('Time to successful get_user_metadata request: '+str(datetime.now() - timer_start))
+
     return user_metadata
 
 
@@ -40,7 +56,13 @@ def get_user_app_list(user_id):
     key_query = ''.join(['?include_played_free_games=1&include_appinfo=1&key=',config.API_KEY])
     steam_id_query = '&steamid='
 
+    timer_start = datetime.now()
+
     user_games = api_request('%(user_apps_list_api)s%(key_query)s%(steam_id_query)s%(user_id)s' % locals())
+
+    if config.DEBUG_ACTIVE_P:
+        logging.info('Time to successful get_user_app_list request: '+str(datetime.now() - timer_start))
+
     return user_games
 
 
@@ -49,7 +71,13 @@ def get_steam_friends(user_id):
     key_query = ''.join(['?key=',config.API_KEY])
     steam_id_query = '&relationship=friend&format=json&steamid='
 
+    timer_start = datetime.now()
+
     user_friends = api_request('%(user_friends_list_api)s%(key_query)s%(steam_id_query)s%(user_id)s' % locals())
+
+    if config.DEBUG_ACTIVE_P:
+        logging.info('Time to successful get_steam_friends request: '+str(datetime.now() - timer_start))
+
     return user_friends
 
 
