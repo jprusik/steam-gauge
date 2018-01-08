@@ -105,8 +105,8 @@ def account_lookup(steam_user, api_format='py', request_type='account'):
             return api_return
 
     # Check db for user first
-    # if model_v2.Users.query.filter_by(user_id=str(steamID)).first():
-    #     return model_v2.Users.query.filter_by(user_id=str(steamID)).first().attributes
+    # if model.Users.query.filter_by(user_id=str(steamID)).first():
+    #     return model.Users.query.filter_by(user_id=str(steamID)).first().attributes
         # user_query.last_update = datetime.now()
 
     user_summary = get_user_metadata(steamID)
@@ -204,8 +204,14 @@ def account_lookup(steam_user, api_format='py', request_type='account'):
 
             app_data = get_app_data(x['appid'])
 
+            # TODO: from APPS drop 'app_title', 'icon', 'small_logo' and use these
+            app_data['app_title'] = x['name']
+            app_data['icon'] = x['img_icon_url']
+            app_data['small_logo'] = x['img_logo_url']
+
             if app_data['missing'] == True:
-                app_data = {'missing':True,'app_id':str(x['appid']),'minutes_played':x['playtime_forever']}
+                # merge mock data with existing record
+                app_data = {**app_data, **{'missing':True,'app_id':str(x['appid']),'minutes_played':x['playtime_forever']}}
                 app_data['hours_played'] = math.ceil((float(app_data['minutes_played'])/60) * 100.0) / 100.0
             else:
                 app_data['genres'] = get_app_genres(x['appid'])
@@ -242,15 +248,15 @@ def account_lookup(steam_user, api_format='py', request_type='account'):
     # else:
         # Save user info as blob for short-term caching
         # try:
-        #     if model_v2.Users.query.filter_by(user_id=api_return['Account']['user_64id']).first():
-        #         user_query = model_v2.Users.query.filter_by(user_id=api_return['Account']['user_64id']).first()
+        #     if model.Users.query.filter_by(user_id=api_return['Account']['user_64id']).first():
+        #         user_query = model.Users.query.filter_by(user_id=api_return['Account']['user_64id']).first()
         #         user_query.last_update = datetime.now()
         #         user_query.attributes = api_return
         #     else:
-        #         model_v2.Users(user_id=api_return['Account']['user_64id'], attributes=api_return, last_update=datetime.now())
-        #     model_v2.session.commit()
+        #         model.Users(user_id=api_return['Account']['user_64id'], attributes=api_return, last_update=datetime.now())
+        #     model.session.commit()
         # except:
-        #     model_v2.session.rollback()
+        #     model.session.rollback()
 
         # return api_return
 
