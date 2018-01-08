@@ -146,6 +146,7 @@ def account_lookup(steam_user, api_format='py', request_type='account'):
         user_friends_list = []
 
         # By filtering out non-multiplayer games here we can minimize lookups on each friend's account later
+        # TODO: use python filter here
         for g in user_games_page['response']['games']:
             user_apps_list.append(str(g['appid']))
         user_multi_games = model.session.query(model.App).filter(model.App.app_id.in_(user_apps_list), model.App.multiplayer==True).all()
@@ -204,7 +205,6 @@ def account_lookup(steam_user, api_format='py', request_type='account'):
 
             app_data = get_app_data(x['appid'])
 
-            # TODO: from APPS drop 'app_title', 'icon', 'small_logo' and use these
             app_data['app_title'] = x['name']
             app_data['icon'] = x['img_icon_url']
             app_data['small_logo'] = x['img_logo_url']
@@ -312,9 +312,8 @@ def get_app_data(pid):
         app_data = query.__dict__
         app_data['missing'] = False
 
-        # There's probably a better way to do this, but we don't need these keys
+        # There's probably a better way to do this, but we don't need this key
         del app_data['_sa_instance_state']
-        del app_data['big_picture_api_raw']
 
         return app_data
     else:
