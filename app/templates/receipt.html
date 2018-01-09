@@ -23,7 +23,7 @@
         <div style="width:95%;padding:1em 2%;">
             <h3>The {{ config.APP_NAME }} value of my account is waaaaaay more than I actually paid for my games!</h3>
             <img class="img-thumbnail" style="float:left;margin:0px 1em 1em 0px;max-width:90%;" src="{{ url_for('static', filename='account-page.png') }}"/>
-            <p>You may have noticed that {{ config.APP_NAME }} only returns the Steam store price of a game, and not the amount you actually paid for it. This is because Valve does not allow access to your Steam transaction history by outside parties (this is a good thing). However, you can still see a transaction history of your account on Steam's website at: <a href="https://store.steampowered.com/account/" target="_blank">store.steampowered.com/account</a></p>
+            <p>You may have noticed that {{ config.APP_NAME }} only returns the Steam store price of a game, and not the amount you actually paid for it. This is because Valve does not allow access to your Steam transaction history by outside parties (this is a good thing). However, you can still see a transaction history of your account on Steam's website at: <a href="https://store.steampowered.com/account/">store.steampowered.com/account</a></p>
             <p>Unfortunately, the transaction history isn't as straightforward as it could be. Because of this, I've created a javascript bookmarklet that will summarize your account data quickly and easily. Simply drag the link below to your browser's bookmark bar. When you're on your account page, click the bookmarklet to get an on-page summary of your account spending.</p>
             <br/>
             <div class="jumbotron">
@@ -31,13 +31,13 @@
                 Valve recently redesigned the Steam website, breaking the last version of Steam Receipt. I've updated the bookmarklet to work with the new layout; however, since the transaction types are now separated into individual pages, you'll need to run Steam Receipt on each one:<br/>
                 <ul style="word-wrap:break-word;font-size:0.75em;">
                     <li>
-                        <a style="color:#FFFFFF;font-weight:bold;" href="https://store.steampowered.com/account/store_transactions" target="_blank">store.steampowered.com/account/store_transactions</a>
+                        <a style="color:#FFFFFF;font-weight:bold;" href="https://store.steampowered.com/account/store_transactions">store.steampowered.com/account/store_transactions</a>
                     </li>
                     <li>
-                        <a style="color:#FFFFFF;font-weight:bold;" href="https://store.steampowered.com/account/ingame_transactions" target="_blank">store.steampowered.com/account/ingame_transactions</a>
+                        <a style="color:#FFFFFF;font-weight:bold;" href="https://store.steampowered.com/account/ingame_transactions">store.steampowered.com/account/ingame_transactions</a>
                     </li>
                     <li>
-                        <a style="color:#FFFFFF;font-weight:bold;" href="https://store.steampowered.com/account/market_transactions" target="_blank">store.steampowered.com/account/market_transactions</a>
+                        <a style="color:#FFFFFF;font-weight:bold;" href="https://store.steampowered.com/account/market_transactions">store.steampowered.com/account/market_transactions</a>
                     </li>
                 </ul>
             </div>
@@ -53,13 +53,13 @@
             </table>
             <br/>
             <h3>Will this work for any account?</h3>
-            <p>Steam Receipt 2.0 was designed to be locale agnostic, but is difficult to test in every situation. If you notice an issue, feel free to <a href="mailto:{{ config.SUPPORT_EMAIL }}">drop me a line</a>. If you'd like to make your own, feel free to submit a pull request or fork off <a href="https://github.com/jprusik/steam-receipt-bookmarklet" target="_blank">this GitHub repo</a>.</p>
+            <p>Steam Receipt 2.0 was designed to be locale agnostic, but is difficult to test in every situation. If you notice an issue, feel free to <a href="mailto:{{ config.SUPPORT_EMAIL }}">drop me a line</a>. If you'd like to make your own, feel free to submit a pull request or fork off <a href="https://github.com/jprusik/steam-receipt-bookmarklet">this GitHub repo</a>.</p>
             <h3>I've redeemed games on Steam that I bought somewhere else. Are they included in my transaction history?</h3>
             <p>Steam does track key redemptions (from game bundles, retail purchase, etc), but has no way of knowing how much you paid for it, so those costs are excluded.</p>
             <h3>The bookmarklet says I've spent more than the value of my collection!</h3>
             <p>Because of in-game transactions and Steam wallet funding (which are not known to {{ config.APP_NAME }}), it is possible to have spent more on your Steam account than it is "worth". That said, it could also be a bug (the script doesn't support non-US currencies at the moment); feel free to shoot an e-mail over to <a href="mailto:{{ config.SUPPORT_EMAIL }}">{{ config.SUPPORT_EMAIL }}</a> with details, and I'll try to get it sussed out.</p>
             <h3>Can I trust this bookmarklet?</h3>
-            <p>Yes, but you should never execute code on web pages with sensitive information without understanding what it does. To facilitate this, I've posted the bookmarklet code in easy-to-read form <a href="https://github.com/jprusik/steam-receipt-bookmarklet/blob/master/steam-receipt.js" target="_blank">on GitHub</a> (also, you can view the source directly in the bookmark link).</p>
+            <p>Yes, but you should never execute code on web pages with sensitive information without understanding what it does. To facilitate this, I've posted the bookmarklet code in easy-to-read form <a href="https://github.com/jprusik/steam-receipt-bookmarklet/blob/master/steam-receipt.js">on GitHub</a> (also, you can view the source directly in the bookmark link).</p>
         </div>
     </div>
 {% endblock %}

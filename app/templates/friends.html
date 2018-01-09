@@ -46,7 +46,7 @@
 {% block content %}
     <div class="jumbotron">
         <img id="useravatar" style="height:70px;width:auto;display:inline-block;padding-right:15px;" src="{{ api_return.Account.avatarfull }}">
-        <h3 id="userhead" style="color:#eeeeee;display:inline-block;vertical-align:bottom;min-height:70px;margin:0;width:100%;max-width:930px;"><a href="http://steamcommunity.com/profiles/{{ api_return.Account.steamid }}" target="_blank">{{ api_return.Account.personaname }}</a> and {{ api_return.Account.Friends|length }} friends have these multiplayer games in common:</h3>
+        <h3 id="userhead" style="color:#eeeeee;display:inline-block;vertical-align:bottom;min-height:70px;margin:0;width:100%;max-width:930px;"><a href="http://steamcommunity.com/profiles/{{ api_return.Account.steamid }}" target="_blank" rel="noopener">{{ api_return.Account.personaname }}</a> and {{ api_return.Account.Friends|length }} friends have these multiplayer games in common:</h3>
         <table style="border-collapse:collapse;border-spacing:0;width:100%;margin-top:15px;">
             <tbody>
                 <tr>
@@ -71,11 +71,11 @@
     {% for f in api_return.Account.Friends %}
         <div class="row featurette friend_entry">
             <div class="col-xs-10 col-md-3">
-                <a href="http://steamcommunity.com/profiles/{{ f.steamid }}" target="_blank"><img class="friend_avatar" border="0" src="{{ f.avatarfull }}" rel="avatar of {{ f.personaname }}" /></a>
+                <a href="http://steamcommunity.com/profiles/{{ f.steamid }}" target="_blank"  rel="noopener"><img class="friend_avatar" border="0" src="{{ f.avatarfull }}" rel="avatar of {{ f.personaname }}" /></a>
                 <br>
-                <a class="friend-persona" href="http://steamcommunity.com/profiles/{{ f.steamid }}" target="_blank">{{ f.personaname }}</a>
+                <a class="friend-persona" href="http://steamcommunity.com/profiles/{{ f.steamid }}" target="_blank"  rel="noopener">{{ f.personaname }}</a>
                 <br>
-                <a class="friend_id" href="http://steamcommunity.com/profiles/{{ f.steamid }}" target="_blank">{{ f.steamid }}</a>
+                <a class="friend_id" href="http://steamcommunity.com/profiles/{{ f.steamid }}" target="_blank"  rel="noopener">{{ f.steamid }}</a>
                 <br>
                 <br>
                 <div class="friend-status">

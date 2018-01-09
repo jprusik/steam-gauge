@@ -345,10 +345,10 @@
                             </td>
                             <td style="vertical-align:top;padding:10px;">
                             {% if api_return.Account.personaname %}
-                                <h2 class="profile-name"><a href="http://steamcommunity.com/profiles/{{ api_return.Account.steamid }}" target="_blank">{{ api_return.Account.personaname }}</a></h2>
-                                <h4>Steam ID: <a style="color:#8bb9e0;" href="http://steamcommunity.com/profiles/{{ api_return.Account.steamid }}" target="_blank">{{ api_return.Account.steamid }}</a></h4>
+                                <h2 class="profile-name"><a href="https://steamcommunity.com/profiles/{{ api_return.Account.steamid }}" target="_blank" rel="noopener">{{ api_return.Account.personaname }}</a></h2>
+                                <h4>Steam ID: <a style="color:#8bb9e0;" href="https://steamcommunity.com/profiles/{{ api_return.Account.steamid }}" target="_blank" rel="noopener">{{ api_return.Account.steamid }}</a></h4>
                             {% else %}
-                                <h2 class="profile-name"><a href="http://steamcommunity.com/profiles/{{ api_return.Account.steamid }}" target="blank">{{ api_return.Account.steamid }}</a></h2>
+                                <h2 class="profile-name"><a href="https://steamcommunity.com/profiles/{{ api_return.Account.steamid }}" target="blank">{{ api_return.Account.steamid }}</a></h2>
                             {% endif %}
                                 <div>
                                     <span style="font-weight:bold;font-size:0.75em;">This user's status is: </span><span class="account-status {{ api_return.Account.personastate|replace('0', 'offline')|replace('1', 'online')|replace('2', 'busy')|replace('3', 'away')|replace('4', 'snooze')|replace('5', 'seeking_trade')|replace('6', 'seeking_play') }}">{{ api_return.Account.personastate|replace('0', 'Offline')|replace('1', 'Online')|replace('2', 'Busy')|replace('3', 'Away')|replace('4', 'Snooze')|replace('5', 'Seeking trade')|replace('6', 'Seeking play') }}</span>
@@ -410,12 +410,12 @@
                             <td id="{{ x.app_id }}_type" class="type_col">{% if x.app_type|upper == 'DLC' %}{{ x.app_type|upper }}{% else %}{{ x.app_type|capitalize }}{% endif %}</td>
                             <td id="{{ x.app_id }}_id" class="id_col">{{ x.app_id }}</td>
                             <td id="{{ x.app_id }}_icon" class="icon_col"><img src="http://media.steampowered.com/steamcommunity/public/images/apps/{{ x.app_id }}/{{ x.icon }}.jpg" /></td>
-                            <td id="{{ x.app_id }}_title" class="title_col"><a href="http://store.steampowered.com/app/{{ x.app_id }}/" target="_blank">{{ x.app_title }}</a></td>
+                            <td id="{{ x.app_id }}_title" class="title_col"><a href="https://store.steampowered.com/app/{{ x.app_id }}/" target="_blank"  rel="noopener">{{ x.app_title }}</a></td>
                             <td id="{{ x.app_id }}_minutes_played" class="minutes_played_col">{{ x.minutes_played }}</td>
                             <td id="{{ x.app_id }}_hours_played" class="hours_played_col">{{ x.hours_played }}</td>
                             <td id="{{ x.app_id }}_time_to_beat" class="time_to_beat_col" data-order="{{ (x.time_to_beat.minutes_range|sort)[0] }}">
                                 {% if x.time_to_beat and x.time_to_beat.hltb_id %}
-                                    <a href="https://howlongtobeat.com/game.php?id={{ x.time_to_beat.hltb_id }}" target="_blank" title="{{ 'data estimated by howlongtobeatsteam.com' if True in [x.time_to_beat.data_imputed_completionist, x.time_to_beat.data_imputed_main_game, x.time_to_beat.data_imputed_extras] }}" rel="nofollow">
+                                    <a href="https://howlongtobeat.com/game.php?id={{ x.time_to_beat.hltb_id }}" target="_blank" title="{{ 'data estimated by howlongtobeatsteam.com' if True in [x.time_to_beat.data_imputed_completionist, x.time_to_beat.data_imputed_main_game, x.time_to_beat.data_imputed_extras] }}" rel="noopener">
                                         {% set ttb_range = x.time_to_beat.minutes_range|sort %}
                                         {% set min_hours, min_minutes, max_hours, max_minutes = (ttb_range[0]/60)|round(0, 'floor')|int, (ttb_range[0]%60), (ttb_range[-1]/60)|round(0, 'floor')|int, (ttb_range[-1]%60) %}
 
@@ -434,15 +434,15 @@
                             <td id="{{ x.app_id }}_release_date" class="release_date_col">{{ x.release_date }}</td>
                             <td id="{{ x.app_id }}_developer" class="developer_col">
                                 {% for d in x.developers %}
-                                    <a href="http://store.steampowered.com/search/?developer={{ d }}" target="_blank">{{ d }}</a>{% if not loop.last %}, {% endif %}
+                                    <a href="https://store.steampowered.com/search/?developer={{ d }}" target="_blank" rel="noopener">{{ d }}</a>{% if not loop.last %}, {% endif %}
                                 {% endfor %}
                             </td>
                             <td id="{{ x.app_id }}_publisher" class="publisher_col">
                                 {% for p in x.publishers %}
-                                    <a href="http://store.steampowered.com/search/?publisher={{ p }}" target="_blank">{{ p }}</a>{% if not loop.last %}, {% endif %}
+                                    <a href="https://store.steampowered.com/search/?publisher={{ p }}" target="_blank" rel="noopener">{{ p }}</a>{% if not loop.last %}, {% endif %}
                                 {% endfor %}
                             </td>
-                            <td id="{{ x.app_id }}_metascore" class="metascore_col text-centered"><a href="{{ x.metascore_link }}" target="_blank">{{ x.metascore }}</a></td>
+                            <td id="{{ x.app_id }}_metascore" class="metascore_col text-centered"><a href="{{ x.metascore_link }}" target="_blank" rel="noopener">{{ x.metascore }}</a></td>
                             <td id="{{ x.app_id }}_os_windows" class="os_windows_col text-centered">
                                 {% if x.os_windows == True %}
                                     <i class="fa fa-check"><span style="display:none;">1</span></i>
@@ -481,7 +481,7 @@
                             <!-- <td id="{{ x.app_id }}_languages" class="languages_col">{{ x.languages|join(', ') }}</td> -->
                             <td id="{{ x.app_id }}_genres" class="genres_col">
                                 {% for g in x.genres %}
-                                    <a href="http://store.steampowered.com/tag/en/{{ g }}/" target="_blank">{{ g }}</a>{% if not loop.last %}, {% endif %}
+                                    <a href="https://store.steampowered.com/tag/en/{{ g }}/" target="_blank" rel="noopener">{{ g }}</a>{% if not loop.last %}, {% endif %}
                                 {% endfor %}
                             </td>
                         </tr>
@@ -490,7 +490,7 @@
                             <td id="{{ x.app_id }}_type" class="type_col"></td>
                             <td id="{{ x.app_id }}_id" class="id_col">{{ x.app_id }}</td>
                             <td id="{{ x.app_id }}_icon" class="icon_col"><img src="http://media.steampowered.com/steamcommunity/public/images/apps/{{ x.app_id }}/{{ x.icon }}.jpg" /></td>
-                            <td id="{{ x.app_id }}_title" class="title_col"><a href="http://store.steampowered.com/app/{{ x.app_id }}/" target="_blank">{{ x.app_title }}</a></td>
+                            <td id="{{ x.app_id }}_title" class="title_col"><a href="https://store.steampowered.com/app/{{ x.app_id }}/" target="_blank" rel="noopener">{{ x.app_title }}</a></td>
                             <td id="{{ x.app_id }}_minutes_played" class="minutes_played_col">{{ x.minutes_played }}</td>
                             <td id="{{ x.app_id }}_hours_played" class="hours_played_col">{{ x.hours_played }}</td>
                             <td id="{{ x.app_id }}_time_to_beat" class="time_to_beat_col" data-order=""></td>
@@ -556,12 +556,12 @@
                 <p>
                     <strong>Database issues (wrong values, missing information, etc):</strong>
                     <br>
-                    <a href="{{ config.ISSUE_TRACKER_DB }}" target="_blank">Steam Gauge DB Issue Tracker</a>
+                    <a href="{{ config.ISSUE_TRACKER_DB }}" target="_blank" rel="noopener">Steam Gauge DB Issue Tracker</a>
                 </p>
                 <p>
                     <strong>General issues:</strong>
                     <br>
-                    <a href="{{ config.ISSUE_TRACKER }}" target="_blank">Steam Gauge App Issue Tracker</a>
+                    <a href="{{ config.ISSUE_TRACKER }}" target="_blank" rel="noopener">Steam Gauge App Issue Tracker</a>
                 </p>
             </div>
         </div>
