@@ -152,20 +152,22 @@
 
             ga('create', '{{ config.GOOGLE_ANALYTICS }}', 'auto');
             ga('send', 'pageview');
-
-            $(function(){
-              // Launch load modal while loading new pages
-              var load_modal_config = {keyboard:false;};
-
-              $('.open-modal').click(function(){
-                $('.loading-modal').modal(load_modal_config);
-              });
-              $('.open-modal-form').submit(function(){
-                $('.loading-modal').modal(load_modal_config);
-              });
-            });
         </script>
         {% endif %}
+
+        <script>
+          $(function(){
+            // Launch load modal while loading new pages
+            var load_modal_config = {keyboard:false};
+
+            $('.open-modal').click(function(){
+              $('.loading-modal').modal(load_modal_config);
+            });
+            $('.open-modal-form').submit(function(){
+              $('.loading-modal').modal(load_modal_config);
+            });
+          });
+        </script>
 
         {% if session['admin_p'] == True %}
         <div class="debug-box">

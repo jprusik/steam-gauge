@@ -84,7 +84,7 @@
         {% if config.MAINTENANCE_ACTIVE_P %}
             <div class="alert alert-info">{{ config.APP_NAME }} is currently undergoing maintenance. Please check back later.</div>
         {% else %}
-            <form class="account-search-form" action="./account" method="get" class="open-modal-form" title="Account Search">
+            <form class="account-search-form open-modal-form" action="./account" method="get" title="Account Search">
                 <label for="basic-url" style="font-size:11px;">Your Steam profile URL:</label>
                 <div class="input-group">
                     <span class="input-group-addon steam-profile-url" style="padding:6px;font-size:12px;color:grey;border-width:0;border-right:1px solid #CCCCCC;">https://steamcommunity.com/id/</span>
