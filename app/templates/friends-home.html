@@ -84,20 +84,20 @@
         {% if config.MAINTENANCE_ACTIVE_P %}
             <div class="alert alert-info">{{ config.APP_NAME }} is currently undergoing maintenance. Please check back later.</div>
         {% else %}
-            <form action="./friends" method="get" target="" title="Account Search">
+            <form action="./friends" method="get" class="open-modal-form" title="Account Search">
                 <label for="basic-url" style="font-size:11px;">Your Steam profile URL:</label>
                 <div class="input-group">
                     <span class="input-group-addon steam-profile-url" style="padding:6px;font-size:12px;color:grey;border-width:0;border-right:1px solid #CCCCCC;">https://steamcommunity.com/id/</span>
                     <input type="text" class="form-control url-text" id="basic-url" style="border-color:#FFFFFF;" name="username" placeholder="username or id">
                     <span class="input-group-btn">
-                        <button class="btn btn-default search-submit" type="submit" data-toggle="modal" data-target=".loading-modal"><i class="fa fa-search fa-fw"></i></button>
+                        <button class="btn btn-default search-submit" type="submit"><i class="fa fa-search fa-fw"></i></button>
                     </span>
                 </div>
             </form>
             <div style="width:100%;text-align:center;display:block;margin:10px auto;clear:both;">or</div>
             {% if session.account_id %}
                 <div id="steam_logged_in" style="width:100%;text-align:center;color:#B0AEAC;display:block;margin:auto;clear:both;">
-                    Lookup Your Account ID: <a href="{{ url_for('friends', username=session.account_id) }}" data-toggle="modal" data-target=".loading-modal">{{ session.account_id }}</a><br />
+                    Lookup Your Account ID: <a href="{{ url_for('friends', username=session.account_id) }}" class="open-modal">{{ session.account_id }}</a><br />
                     <a id="openid_logout" href="{{ url_for('logout') }}">(Log out)</a>
                 </div>
             {% else %}
