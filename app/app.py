@@ -3,10 +3,13 @@ from flask import Flask, url_for, redirect, request, Markup, render_template, ma
 from urllib.request import quote
 from urllib.parse import urlencode
 from collections import OrderedDict
-import model, config, datetime
+import config, datetime
 
 app = Flask(__name__)
 app.config.from_object('config')
+
+from flask_sqlalchemy import SQLAlchemy
+db = SQLAlchemy(app)
 
 # explicitly disable debug in production
 app.debug = config.DEBUG_ACTIVE_P
@@ -16,7 +19,7 @@ if app.debug:
     import logging
     logging.basicConfig(
         filename=config.DEBUG_LOG_FILE,
-        level=logging.DEBUG,
+        level=logging.INFO,
         format='[%(asctime)s.%(msecs)03d] %(levelname)s {%(pathname)s:%(lineno)d}\n%(message)s',
         datefmt='%H:%M:%S'
     )

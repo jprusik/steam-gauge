@@ -4,8 +4,7 @@ from datetime import datetime
 import math
 
 # import other app scripts
-import config
-import model
+import config, model
 
 if config.DEBUG_ACTIVE_P:
     import logging
@@ -149,7 +148,7 @@ def account_lookup(steam_user, api_format='py', request_type='account'):
         # TODO: use python filter here
         for g in user_games_page['response']['games']:
             user_apps_list.append(str(g['appid']))
-        user_multi_games = model.session.query(model.App).filter(model.App.app_id.in_(user_apps_list), model.App.multiplayer==True).all()
+        user_multi_games = model.App.query.filter(model.App.app_id.in_(user_apps_list), model.App.multiplayer==True).all()
         for mg in user_multi_games:
             api_return['Account']['UserApps']['Apps'].append(mg.__dict__)
             user_apps_multi.append(mg.app_id)
@@ -307,7 +306,7 @@ def all_games_account():
 
 def get_app_data(pid):
     pid = str(pid)
-    query = model.session.query(model.App).filter_by(app_id=pid).first()
+    query = model.App.query.filter_by(app_id=pid).first()
     if query:
         app_data = query.__dict__
         app_data['missing'] = False
@@ -323,7 +322,7 @@ def get_app_data(pid):
 def get_app_genres(pid):
     pid = str(pid)
     genres = []
-    for g in model.session.query(model.Genre_App_Map).filter_by(apps=pid).all():
+    for g in model.Genre_App_Map.query.filter_by(apps=pid).all():
         genres.append(g.genres)
     return genres
 
@@ -331,7 +330,7 @@ def get_app_genres(pid):
 def get_app_developers(pid):
     pid = str(pid)
     developers = []
-    for d in model.session.query(model.Developer_App_Map).filter_by(apps=pid).all():
+    for d in model.Developer_App_Map.query.filter_by(apps=pid).all():
         developers.append(d.developers)
     return developers
 
@@ -339,7 +338,7 @@ def get_app_developers(pid):
 def get_app_publishers(pid):
     pid = str(pid)
     publishers = []
-    for p in model.session.query(model.Publisher_App_Map).filter_by(apps=pid).all():
+    for p in model.Publisher_App_Map.query.filter_by(apps=pid).all():
         publishers.append(p.publishers)
     return publishers
 
@@ -347,14 +346,14 @@ def get_app_publishers(pid):
 def get_app_languages(pid):
     pid = str(pid)
     languages = []
-    for l in model.session.query(model.Language_App_Map).filter_by(apps=pid).all():
+    for l in model.Language_App_Map.query.filter_by(apps=pid).all():
         languages.append(l.languages)
     return languages
 
 
 def get_app_time_to_beat(pid):
     pid = str(pid)
-    query = model.session.query(model.Time_To_Beat).filter_by(app_id=pid).first()
+    query = model.Time_To_Beat.query.filter_by(app_id=pid).first()
 
     if query:
         app_data = query.__dict__

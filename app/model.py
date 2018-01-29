@@ -1,114 +1,103 @@
-import config
-from sqlalchemy import create_engine, Column, Integer, String, Boolean, Unicode, UnicodeText, Text, Float, DateTime, PickleType
+import app
 
-engine = create_engine(config.MYSQL_DATABASE_URI, echo=False)
-
-from sqlalchemy.ext.declarative import declarative_base
-
-Base = declarative_base()
-
-from sqlalchemy.orm import sessionmaker
-
-Session = sessionmaker()
-Session.configure(bind=engine)
-session = Session()
+db = app.db
 
 # TODO: app_id needs to be explicitly indexed?
-class App(Base):
+class App(db.Model):
     __tablename__ = 'APPS'
 
-    achievements_enabled = Column(Boolean)
-    app_id = Column(Unicode(20), primary_key=True)
-    app_type = Column(UnicodeText)
-    app_website = Column(UnicodeText)
-    big_logo = Column(UnicodeText)
-    captions = Column(Boolean)
-    commentary = Column(Boolean)
-    controller_support = Column(UnicodeText)
-    hdr = Column(Boolean)
-    hours_played = Column(Float)
-    last_updated = Column(DateTime)
-    leaderboards_enabled = Column(Boolean)
-    metascore = Column(UnicodeText)
-    metascore_link = Column(UnicodeText)
-    minutes_played = Column(Integer)
-    multiplayer = Column(Boolean)
-    os_linux = Column(Boolean)
-    os_mac = Column(Boolean)
-    os_windows = Column(Boolean)
-    release_date = Column(UnicodeText)
-    required_age = Column(Integer)
-    singleplayer = Column(Boolean)
-    size_mb = Column(Float)
-    source_sdk_included = Column(Boolean)
-    stats_enabled = Column(Boolean)
-    steamcloud_enabled = Column(Boolean)
-    store_price_default_usd = Column(Float)
-    tradingcards_enabled = Column(Boolean)
-    VAC_enabled = Column(Boolean)
-    workshop_enabled = Column(Boolean)
+    achievements_enabled = db.Column(db.Boolean)
+    app_id = db.Column(db.Unicode(20), primary_key=True)
+    app_type = db.Column(db.UnicodeText)
+    app_website = db.Column(db.UnicodeText)
+    big_logo = db.Column(db.UnicodeText)
+    captions = db.Column(db.Boolean)
+    commentary = db.Column(db.Boolean)
+    controller_support = db.Column(db.UnicodeText)
+    hdr = db.Column(db.Boolean)
+    hours_played = db.Column(db.Float)
+    last_updated = db.Column(db.DateTime)
+    leaderboards_enabled = db.Column(db.Boolean)
+    metascore = db.Column(db.UnicodeText)
+    metascore_link = db.Column(db.UnicodeText)
+    minutes_played = db.Column(db.Integer)
+    multiplayer = db.Column(db.Boolean)
+    os_linux = db.Column(db.Boolean)
+    os_mac = db.Column(db.Boolean)
+    os_windows = db.Column(db.Boolean)
+    release_date = db.Column(db.UnicodeText)
+    required_age = db.Column(db.Integer)
+    singleplayer = db.Column(db.Boolean)
+    size_mb = db.Column(db.Float)
+    source_sdk_included = db.Column(db.Boolean)
+    stats_enabled = db.Column(db.Boolean)
+    steamcloud_enabled = db.Column(db.Boolean)
+    store_price_default_usd = db.Column(db.Float)
+    tradingcards_enabled = db.Column(db.Boolean)
+    VAC_enabled = db.Column(db.Boolean)
+    workshop_enabled = db.Column(db.Boolean)
 
     def __repr__(self):
         return '<App %s - "Name No Longer Stored" (%s%s) | Type: %s | Multi: %s | Price: $%s | Windows: %s | Mac: %s | Linux: %s | Joy: %s | Metacritic: %s | %s>' % (self.app_id, self.size_mb, ' MB', self.app_type, self.multiplayer, self.store_price_default_usd, self.os_windows, self.os_mac, self.os_linux, self.controller_support, self.metascore, self.big_logo)
 
 
-class Time_To_Beat(Base):
+class Time_To_Beat(db.Model):
     __tablename__ = 'TIME_TO_BEAT'
 
-    app_id = Column(Unicode(20), index=True, primary_key=True)
-    data_imputed_completionist = Column(Boolean)
-    data_imputed_extras = Column(Boolean)
-    data_imputed_main_game = Column(Boolean)
-    hltb_id = Column(Unicode(20))
-    minutes_to_beat_completionist = Column(Integer)
-    minutes_to_beat_extras = Column(Integer)
-    minutes_to_beat_main_game = Column(Integer)
-    timetobeat_api_raw = Column(Text)
+    app_id = db.Column(db.Unicode(20), index=True, primary_key=True)
+    data_imputed_completionist = db.Column(db.Boolean)
+    data_imputed_extras = db.Column(db.Boolean)
+    data_imputed_main_game = db.Column(db.Boolean)
+    hltb_id = db.Column(db.Unicode(20))
+    minutes_to_beat_completionist = db.Column(db.Integer)
+    minutes_to_beat_extras = db.Column(db.Integer)
+    minutes_to_beat_main_game = db.Column(db.Integer)
+    timetobeat_api_raw = db.Column(db.Text)
 
 
-class Genre_App_Map(Base):
+class Genre_App_Map(db.Model):
     __tablename__ = 'GENRE_APP_MAP'
 
-    id = Column(Integer, index=True, primary_key=True, autoincrement=True)
-    genres = Column(Unicode(200), index=True)
-    apps = Column(Unicode(20), index=True)
+    id = db.Column(db.Integer, index=True, primary_key=True, autoincrement=True)
+    genres = db.Column(db.Unicode(200), index=True)
+    apps = db.Column(db.Unicode(20), index=True)
 
 
-class Developer_App_Map(Base):
+class Developer_App_Map(db.Model):
     __tablename__ = 'DEVELOPER_APP_MAP'
 
-    id = Column(Integer, index=True, primary_key=True, autoincrement=True)
-    developers = Column(Unicode(200), index=True)
-    apps = Column(Unicode(20), index=True)
+    id = db.Column(db.Integer, index=True, primary_key=True, autoincrement=True)
+    developers = db.Column(db.Unicode(200), index=True)
+    apps = db.Column(db.Unicode(20), index=True)
 
 
-class Publisher_App_Map(Base):
+class Publisher_App_Map(db.Model):
     __tablename__ = 'PUBLISHER_APP_MAP'
 
-    id = Column(Integer, index=True, primary_key=True, autoincrement=True)
-    publishers = Column(Unicode(200), index=True)
-    apps = Column(Unicode(20), index=True)
+    id = db.Column(db.Integer, index=True, primary_key=True, autoincrement=True)
+    publishers = db.Column(db.Unicode(200), index=True)
+    apps = db.Column(db.Unicode(20), index=True)
 
 
-class Language_App_Map(Base):
+class Language_App_Map(db.Model):
     __tablename__ = 'LANGUAGE_APP_MAP'
 
-    id = Column(Integer, index=True, primary_key=True, autoincrement=True)
-    languages = Column(Unicode(200), index=True)
-    apps = Column(Unicode(20), index=True)
+    id = db.Column(db.Integer, index=True, primary_key=True, autoincrement=True)
+    languages = db.Column(db.Unicode(200), index=True)
+    apps = db.Column(db.Unicode(20), index=True)
 
 
-class DLC_id_App_Map(Base):
+class DLC_id_App_Map(db.Model):
     __tablename__ = 'DLC_ID_APP_MAP'
 
-    id = Column(Integer, index=True, primary_key=True, autoincrement=True)
-    dlc_ids = Column(Unicode(200), index=True)
-    apps = Column(Unicode(20), index=True)
+    id = db.Column(db.Integer, index=True, primary_key=True, autoincrement=True)
+    dlc_ids = db.Column(db.Unicode(200), index=True)
+    apps = db.Column(db.Unicode(20), index=True)
 
 
 def littleBobby():
-    Base.metadata.drop_all(engine)
+    db.drop_all()
 
 
 def createAll():
-    Base.metadata.create_all(engine)
+    db.create_all()
