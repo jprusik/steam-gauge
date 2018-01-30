@@ -1,6 +1,4 @@
-import app
-
-db = app.db
+from app.app import db
 
 # TODO: app_id needs to be explicitly indexed?
 class App(db.Model):

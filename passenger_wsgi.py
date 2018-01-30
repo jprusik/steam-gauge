@@ -11,5 +11,3 @@ sys.path.append(cwd + app.config.APP_DIRECTORY)  # You must add your project her
 
 from app.app import app as application
 
-if __name__ == '__main__':
-    application.run(debug=app.config.DEBUG_ACTIVE_P)
