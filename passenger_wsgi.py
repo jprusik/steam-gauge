@@ -7,7 +7,7 @@ INTERP = app.config.PYTHON_DIRECTORY
 if sys.executable != INTERP: os.execl(INTERP, INTERP, *sys.argv)
 
 cwd = os.getcwd()
-sys.path.append(cwd + app.config.APP_DIRECTORY)  # You must add your project here
+sys.path.insert(0, cwd + app.config.APP_DIRECTORY)  # You must add your project here
 
 from app.app import app as application
 
