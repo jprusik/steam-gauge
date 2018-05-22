@@ -1,4 +1,5 @@
 # Can ignore specific files
+.venv
 .htaccess
 .DS_Store
 config.py
