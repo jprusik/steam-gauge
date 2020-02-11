@@ -9,4 +9,4 @@ mysql-connector-python==8.0.5
 python3-openid==3.0.10
 simplejson==3.10.0
 SQLAlchemy==1.2.2
-Werkzeug==0.11.15
+Werkzeug==0.15.3
