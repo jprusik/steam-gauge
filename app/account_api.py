@@ -62,7 +62,10 @@ def get_user_app_list(user_id):
     if config.DEBUG_ACTIVE_P:
         logging.info('Time to successful get_user_app_list request: '+str(datetime.now() - timer_start))
 
+    if not user_games['response']:
+        return {'response': {'games': []}}
     return user_games
+
 
 
 def get_steam_friends(user_id):
@@ -127,8 +130,12 @@ def account_lookup(steam_user, api_format='py', request_type='account'):
         # Convert timestamps to datetimes, since Jinja can't
         if str(api_return['Account']['timecreated']).isdigit():
             api_return['Account']['timecreated'] = datetime.fromtimestamp(api_return['Account']['timecreated'])
-        if str(api_return['Account']['lastlogoff']).isdigit():
-            api_return['Account']['lastlogoff'] = datetime.fromtimestamp(api_return['Account']['lastlogoff'])
+
+        try:
+            if str(api_return['Account']['lastlogoff']).isdigit():
+                api_return['Account']['lastlogoff'] = datetime.fromtimestamp(api_return['Account']['lastlogoff'])
+        except:
+            pass
 
     # Get account's gamelist
     user_games_page = get_user_app_list(steamID)

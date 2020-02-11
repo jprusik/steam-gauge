@@ -361,7 +361,9 @@
                                     {% if api_return.Account.loccountrycode %}<span id="user_country">{{ api_return.Account.loccountrycode }}</span>{% endif %}
                                     <br/>
                                     <br/>
-                                    Last logoff: <span id="last_logoff_datetime">{{ api_return.Account.lastlogoff }}</span>
+                                    {% if api_return.Account.lastlogoff %}
+                                        Last logoff: <span id="last_logoff_datetime">{{ api_return.Account.lastlogoff }}</span>
+                                    {% endif %}
                                     {% if api_return.Account.gameextrainfo %}<br/>Currently Playing: <span id="current_app">{{ api_return.Account.gameextrainfo }}</span>{% endif %}
                                     </p>
                                 </div>
