@@ -1,6 +1,6 @@
 click==6.7
 defusedxml==0.4.1
-Flask==0.12.2
+Flask==1.0
 Flask-SQLAlchemy==2.3.2
 itsdangerous==0.24
 Jinja2==2.9.4
