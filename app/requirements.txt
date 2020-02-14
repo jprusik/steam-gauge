@@ -1,12 +1,12 @@
 click==6.7
 defusedxml==0.4.1
-Flask==0.12.2
+Flask==1.1.1
 Flask-SQLAlchemy==2.3.2
 itsdangerous==0.24
-Jinja2==2.9.4
+Jinja2==2.10.1
 MarkupSafe==0.23
 mysql-connector-python==8.0.5
 python3-openid==3.0.10
 simplejson==3.10.0
 SQLAlchemy==1.2.2
-Werkzeug==0.11.15
+Werkzeug==0.15.3
