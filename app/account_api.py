@@ -171,8 +171,11 @@ def account_lookup(steam_user, api_format='py', request_type='account'):
             if m['communityvisibilitystate'] == 3:
                 if str(m['timecreated']).isdigit():
                     m['timecreated'] = datetime.fromtimestamp(m['timecreated'])
-                if str(m['lastlogoff']).isdigit():
-                    m['lastlogoff'] = datetime.fromtimestamp(m['lastlogoff'])
+                try:
+                    if str(m['lastlogoff']).isdigit():
+                        m['lastlogoff'] = datetime.fromtimestamp(m['lastlogoff'])
+                except:
+                    pass
 
             user_friend_apps = get_user_app_list(m['steamid'])
             user_friend_apps_list = []
