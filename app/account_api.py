@@ -12,7 +12,10 @@ if config.DEBUG_ACTIVE_P:
 def api_request(request_url):
     if config.DEBUG_ACTIVE_P:
         logging.debug('request url: '+request_url)
-    return json.load(urllib2.build_opener().open(urllib2.Request(request_url)))
+    try:
+        return json.load(urllib2.build_opener().open(urllib2.Request(request_url)))
+    except:
+        return
 
 
 def resolve_steam_vanity(username):
@@ -76,6 +79,13 @@ def get_steam_friends(user_id):
     timer_start = datetime.now()
 
     user_friends = api_request('%(user_friends_list_api)s%(key_query)s%(steam_id_query)s%(user_id)s' % locals())
+
+    if not user_friends:
+        user_friends = {
+            "friendslist": {
+                "friends": []
+            }
+        }
 
     if config.DEBUG_ACTIVE_P:
         logging.info('Time to successful get_steam_friends request: '+str(datetime.now() - timer_start))
