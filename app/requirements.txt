@@ -3,7 +3,7 @@ defusedxml==0.4.1
 Flask==1.1.1
 Flask-SQLAlchemy==2.3.2
 itsdangerous==0.24
-Jinja2==2.10.1
+Jinja2==2.11.3
 MarkupSafe==0.23
 mysql-connector-python==8.0.27
 python3-openid==3.0.10
