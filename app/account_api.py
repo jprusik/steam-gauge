@@ -224,9 +224,20 @@ def account_lookup(steam_user, api_format='py', request_type='account'):
 
             app_data = get_app_data(x['appid'])
 
-            app_data['app_title'] = x['name']
-            app_data['icon'] = x['img_icon_url']
-            app_data['small_logo'] = x['img_logo_url']
+            try:
+                app_data['app_title'] = x['name']
+            except:
+                app_data['app_title'] = ''
+
+            try:
+                app_data['icon'] = x['img_icon_url']
+            except:
+                app_data['icon'] = ''
+
+            try:
+                app_data['small_logo'] = x['img_logo_url']
+            except:
+                app_data['small_logo'] = ''
 
             if app_data['missing'] == True:
                 # merge mock data with existing record
