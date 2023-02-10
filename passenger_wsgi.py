@@ -10,4 +10,3 @@ cwd = os.getcwd()
 sys.path.insert(0, cwd + app.config.APP_DIRECTORY)  # You must add your project here
 
 from app.app import app as application
-
